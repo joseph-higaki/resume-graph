@@ -1,10 +1,10 @@
 ---
 type: "[[Skill]]"
-prefLabel: AWS S3
+prefLabel: "AWS S3"
 broader: "[[cloud-aws]]"
-level: working                 # aware | working | proficient | expert
-evidencedBy: [ "[[Personal Finances Lakehouse]]" ]
+level: working
+evidencedBy: [ "[[Personal Finances Lakehouse]]", "[[Billing and Accounting Dashboards]]" ]
 ---
 # AWS S3
 
-Object storage as the lakehouse landing zone. TODO(owner): confirm evidence.
+Object storage: lakehouse landing zone; invoice-file staging at InOrbis.

@@ -1,10 +1,10 @@
 ---
 type: "[[Skill]]"
-prefLabel: Python
+prefLabel: "Python"
 broader: "[[data-eng]]"
 level: proficient
-evidencedBy: [ "[[Resume Graph]]", "[[Biomedical GraphRAG Bench]]", "[[Personal Finances Lakehouse]]" ]
+evidencedBy: [ "[[Resume Graph]]", "[[Biomedical GraphRAG Bench]]", "[[Personal Finances Lakehouse]]", "[[Data Analytics Consultant — InOrbis Analytics]]" ]
 ---
 # Python
 
-Daily driver for self-directed data and AI engineering projects.
+Daily driver for self-directed data and AI engineering projects; ETL scripting at InOrbis.

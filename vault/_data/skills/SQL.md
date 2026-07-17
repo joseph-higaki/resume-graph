@@ -1,8 +1,8 @@
 ---
 type: "[[Skill]]"
-prefLabel: SQL
+prefLabel: "SQL"
 broader: "[[data-eng]]"
 level: proficient
-evidencedBy: [ "[[Personal Finances Lakehouse]]", "[[Delivery Manager — EPAM]]" ]
+evidencedBy: [ "[[Personal Finances Lakehouse]]", "[[Software Analyst-Programmer — TransSolutions Systems]]", "[[Data Analytics Consultant — InOrbis Analytics]]" ]
 ---
 # SQL

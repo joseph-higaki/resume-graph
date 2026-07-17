@@ -2,13 +2,20 @@
 type: "[[Person]]"
 name: Joseph Higaki
 email: joseph.higaki@gmail.com
-jobTitle: Delivery Manager
-description: "Delivery Manager in Barcelona moving toward data/AI engineering IC roles. Ex-C# developer; builds data platforms and knowledge-graph tooling in self-directed projects."  # TODO(owner) tighten wording
-sameAs: [ "https://github.com/joseph-higaki", "https://www.linkedin.com/in/joseph-higaki" ]  # TODO(owner) confirm LinkedIn slug
+jobTitle: "Delivery Manager - Healthcare & Life Sciences"
+description: "Software & Data Engineering Leader with 10+ years driving enterprise-scale initiatives across regulated industries — pharma, investment management, digital banking, and cloud services — spanning technical leadership, architecture strategy, and portfolio management across globally distributed teams."
+sameAs: [ "https://github.com/joseph-higaki", "https://www.linkedin.com/in/josephhigaki" ]
 ---
 # Joseph Higaki
 
-The hub node of the graph. Narrative bio, motivation, and the pharma-tech
-target story go here — body prose never enters the graph.
+LinkedIn headline: "Software Engineer | Lifelong Learner | Enterprise Leadership in
+Pharma, Banking & Cloud".
 
-TODO(owner): write the long-form bio.
+Languages: Spanish (native), English (C1 / full professional). Honors: Verizon
+Ovation Award, IBM Manager's Choice Award (x2) — neither languages nor honors are
+modeled in the graph yet.
+
+Three summary variants exist across sources (LinkedIn About, CV 2025-09, docx CV);
+the description above condenses the LinkedIn About — pick the canonical wording at
+interview (see docs/upload_report_20260717.md). Phone number deliberately excluded
+from this public repo.

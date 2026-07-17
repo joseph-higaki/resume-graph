@@ -1,0 +1,8 @@
+vault_to_rdf.py vendored from the Vault-LD spec repo (Apache-2.0; LICENSE alongside).
+
+repo:    https://github.com/The-Knowledge-Graph-Guys/vault-ld
+commit:  025e71be8d810e387dc451c920e05472d1c47170
+date:    2026-07-15
+file:    scripts/vault_to_rdf.py (copied verbatim)
+
+Local patches: none. Any patch goes in as a clearly-marked diff against this commit.

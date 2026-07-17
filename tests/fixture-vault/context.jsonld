@@ -1,0 +1,20 @@
+{
+  "@context": [
+    {
+      "@base": "https://example.org/id/",
+      "type": "@type",
+      "id": "@id",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "sdo": "https://schema.org/",
+      "label": "rdfs:label",
+      "comment": "rdfs:comment",
+      "subClassOf": { "@id": "rdfs:subClassOf", "@type": "@id", "@container": "@set" },
+      "domainIncludes": { "@id": "sdo:domainIncludes", "@type": "@id", "@container": "@set" },
+      "rangeIncludes": { "@id": "sdo:rangeIncludes", "@type": "@id", "@container": "@set" },
+      "released": { "@id": "sdo:datePublished", "@type": "xsd:date" }
+    },
+    "Ontologies/fx/context.jsonld"
+  ]
+}

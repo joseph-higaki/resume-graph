@@ -33,12 +33,14 @@ resume-graph/
 ├── .claude/CLAUDE.md
 ├── Makefile                       # build | validate | export | site | project | all
 ├── vault/                         # SOURCE OF TRUTH (Vault-LD)
-│   ├── context.jsonld             # composes schema.org + SKOS + rg: vocab
-│   ├── ontology/                  # rg: classes/properties as notes (Vault-LD schema layer)
+│   ├── context.jsonld             # root @context: cross-cutting core + composes the two below
+│   ├── Ontologies/rg/             # rg: classes/properties as notes (folder names fixed by the exporter, SPEC §3)
+│   ├── Vocabularies/SkillCategories/  # SKOS concept tree: cloud → cloud-aws / cloud-gcp, data-eng, devops, delivery…
 │   ├── positions/                 # one note per role
+│   ├── organizations/             # employers/institutions (wiki-link targets for positions & education)
 │   ├── projects/                  # incl. this project itself (dogfood)
 │   ├── skills/                    # one note per skill
-│   ├── categories/                # SKOS concept tree: cloud → cloud-aws / cloud-gcp, data-eng, delivery…
+│   ├── bullets/                   # one note per resume bullet (rg:Bullet — see authoring model)
 │   ├── education/
 │   ├── certs/
 │   └── profile.md                 # the schema:Person hub
@@ -73,6 +75,7 @@ Example `vault/positions/Delivery Manager — EPAM.md`:
 type: "[[Position]]"
 roleName: Delivery Manager
 organization: "[[EPAM]]"
+heldBy: "[[profile]]"
 startDate: 2021-06-01
 usedSkill: ["[[Stakeholder Management]]", "[[AWS S3]]"]
 ---
@@ -81,21 +84,18 @@ Led delivery for a data platform… # TODO(owner)
 
 ## Learnings
 …
-
-## Bullets
-- {rg:audience: data-eng} Built the ingestion pipeline runbook…
-- {rg:audience: delivery} Ran a 14-person cross-functional team…
 ```
-Bullet audience tagging: pick a simple, parseable convention (frontmatter list of bullet objects is acceptable if inline annotation proves awkward — decide in M1 and document it). Applications later select audiences.
+**Bullet convention (decided in M1):** one small note per bullet in `vault/bullets/`, typed `[[Bullet]]` with `text`, `audience` (data-eng | ai-eng | delivery | general), `bulletOf` → owning Position/Project, and `order`. Rationale: Vault-LD never exports the body (SPEC §5.3) and the exporter has no blank-node support, so frontmatter notes are the only way audience-tagged bullets reach the graph. Applications later select audiences.
 
 Example `vault/skills/AWS S3.md`:
 ```markdown
 ---
 type: "[[Skill]]"
+prefLabel: AWS S3
 broader: "[[cloud-aws]]"
 level: working                    # aware | working | proficient | expert
-escoMatch: null                   # ESCO IRI when mapped; export warns (not fails) on null
 evidencedBy: ["[[Resume Graph]]"]
+# escoMatch: <ESCO IRI>          # add when mapped (M6); a SHACL sh:Warning flags the absence
 ---
 # AWS S3
 Static hosting + artifact storage for CI pipelines.

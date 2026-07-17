@@ -1,0 +1,41 @@
+{
+  "@context": [
+    {
+      "@base": "https://joseph-higaki.github.io/resume-graph/id/",
+      "type": "@type",
+      "id": "@id",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "sdo": "https://schema.org/",
+      "esco": "http://data.europa.eu/esco/skill/",
+      "label": "rdfs:label",
+      "comment": "rdfs:comment",
+      "prefLabel": "skos:prefLabel",
+      "definition": "skos:definition",
+      "subClassOf": { "@id": "rdfs:subClassOf", "@type": "@id", "@container": "@set" },
+      "subPropertyOf": { "@id": "rdfs:subPropertyOf", "@type": "@id", "@container": "@set" },
+      "broader": { "@id": "skos:broader", "@type": "@id" },
+      "topConceptOf": { "@id": "skos:topConceptOf", "@type": "@id" },
+      "inScheme": { "@id": "skos:inScheme", "@type": "@id" },
+      "escoMatch": { "@id": "skos:closeMatch", "@type": "@id" },
+      "domainIncludes": { "@id": "sdo:domainIncludes", "@type": "@id", "@container": "@set" },
+      "rangeIncludes": { "@id": "sdo:rangeIncludes", "@type": "@id", "@container": "@set" },
+      "name": "sdo:name",
+      "email": "sdo:email",
+      "jobTitle": "sdo:jobTitle",
+      "description": "sdo:description",
+      "sameAs": { "@id": "sdo:sameAs", "@type": "@id", "@container": "@set" },
+      "url": { "@id": "sdo:url", "@type": "@id" },
+      "roleName": "sdo:roleName",
+      "startDate": { "@id": "sdo:startDate", "@type": "xsd:date" },
+      "endDate": { "@id": "sdo:endDate", "@type": "xsd:date" },
+      "text": "sdo:text",
+      "credentialCategory": "sdo:credentialCategory",
+      "recognizedBy": { "@id": "sdo:recognizedBy", "@type": "@id" }
+    },
+    "Ontologies/rg/context.jsonld",
+    "Vocabularies/SkillCategories/context.jsonld"
+  ]
+}

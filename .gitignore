@@ -4,6 +4,9 @@
 !.env.example
 secrets/
 
+# Generated graph + exports — derived from the vault, never edited (CLAUDE.md rule 1)
+dist/
+
 # Python
 __pycache__/
 *.py[cod]

@@ -1,0 +1,23 @@
+{
+  "@context": {
+    "@base": "https://joseph-higaki.github.io/resume-graph/vocab/rg#",
+    "rg": "https://joseph-higaki.github.io/resume-graph/vocab/rg#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "level": "rg:level",
+    "evidencedBy": { "@id": "rg:evidencedBy", "@type": "@id", "@container": "@set" },
+    "usedSkill": { "@id": "rg:usedSkill", "@type": "@id", "@container": "@set" },
+    "deliveredDuring": { "@id": "rg:deliveredDuring", "@type": "@id" },
+    "heldBy": { "@id": "rg:heldBy", "@type": "@id" },
+    "organization": { "@id": "rg:organization", "@type": "@id" },
+    "certifies": { "@id": "rg:certifies", "@type": "@id", "@container": "@set" },
+    "audience": "rg:audience",
+    "bulletOf": { "@id": "rg:bulletOf", "@type": "@id" },
+    "order": { "@id": "rg:order", "@type": "xsd:integer" },
+    "demands": { "@id": "rg:demands", "@type": "@id", "@container": "@set" },
+    "emphasizes": { "@id": "rg:emphasizes", "@type": "@id", "@container": "@set" },
+    "excludes": { "@id": "rg:excludes", "@type": "@id", "@container": "@set" },
+    "targetRole": "rg:targetRole",
+    "status": "rg:status",
+    "summary": "rg:summary"
+  }
+}

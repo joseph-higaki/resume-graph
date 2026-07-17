@@ -1,0 +1,30 @@
+# CI — test, build, SHACL-validate on every push/PR. Pages deploy arrives in M5.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true          # caches uv's download cache between runs
+
+      # --locked: use uv.lock exactly; fail instead of re-resolving if it's stale.
+      - run: uv sync --locked
+
+      - run: make all
+
+      # The built graph, downloadable per run for inspection.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: graph
+          path: |
+            dist/graph.ttl
+            dist/graph.jsonld

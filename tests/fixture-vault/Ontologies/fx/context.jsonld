@@ -1,0 +1,9 @@
+{
+  "@context": {
+    "@base": "https://example.org/vocab/fx#",
+    "fx": "https://example.org/vocab/fx#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "poweredBy": { "@id": "fx:poweredBy", "@type": "@id" },
+    "watts": { "@id": "fx:watts", "@type": "xsd:integer" }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "@context": {
+    "@base": "https://joseph-higaki.github.io/resume-graph/vocab/categories#",
+    "cat": "https://joseph-higaki.github.io/resume-graph/vocab/categories#"
+  }
+}

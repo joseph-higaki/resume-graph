@@ -1,0 +1,156 @@
+# SHACL shapes — the only validation gate (no pydantic layer; CLAUDE.md rule 3).
+# Severity contract: sh:Violation fails the build; sh:Warning reports without failing
+# (pipeline/validate.py runs pySHACL with allow_warnings=True).
+
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sdo:  <https://schema.org/> .
+@prefix rg:   <https://joseph-higaki.github.io/resume-graph/vocab/rg#> .
+@prefix rgs:  <https://joseph-higaki.github.io/resume-graph/vocab/shapes#> .
+
+# The shapes document itself — sh:declare feeds the prefixes used inside
+# sh:sparql constraint bodies (SPARQL text can't see Turtle @prefix lines).
+rgs:shapes a owl:Ontology ;
+    rdfs:label "resume-graph SHACL shapes" ;
+    sh:declare [ sh:prefix "rg" ;
+                 sh:namespace "https://joseph-higaki.github.io/resume-graph/vocab/rg#"^^xsd:anyURI ] .
+
+# ---------------------------------------------------------------------------
+# Person — the hub. description is required because the M3 projection
+# substitutes an Application's tailored summary for it.
+# ---------------------------------------------------------------------------
+rgs:PersonShape a sh:NodeShape ;
+    sh:targetClass rg:Person ;
+    sh:nodeKind sh:IRI ;
+    sh:pattern "^https://joseph-higaki\\.github\\.io/resume-graph/id/" ;
+    sh:property [ sh:path sdo:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:email ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:pattern "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" ] ;
+    sh:property [ sh:path sdo:jobTitle ; sh:datatype xsd:string ; sh:minCount 1 ] ;
+    sh:property [ sh:path sdo:description ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+rgs:PositionShape a sh:NodeShape ;
+    sh:targetClass rg:Position ;
+    sh:nodeKind sh:IRI ;
+    sh:pattern "^https://joseph-higaki\\.github\\.io/resume-graph/id/" ;
+    sh:property [ sh:path sdo:roleName ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:organization ; sh:class rg:Organization ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:heldBy ; sh:class rg:Person ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:startDate ; sh:datatype xsd:date ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:endDate ; sh:datatype xsd:date ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:usedSkill ; sh:class rg:Skill ] .
+
+rgs:OrganizationShape a sh:NodeShape ;
+    sh:targetClass rg:Organization ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path sdo:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+rgs:ProjectShape a sh:NodeShape ;
+    sh:targetClass rg:Project ;
+    sh:nodeKind sh:IRI ;
+    sh:pattern "^https://joseph-higaki\\.github\\.io/resume-graph/id/" ;
+    sh:property [ sh:path sdo:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:description ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:url ; sh:nodeKind sh:IRI ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:startDate ; sh:datatype xsd:date ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:usedSkill ; sh:class rg:Skill ] ;
+    sh:property [ sh:path rg:deliveredDuring ; sh:class rg:Position ; sh:maxCount 1 ] .
+
+# ---------------------------------------------------------------------------
+# Skill. Structure first; the evidence rule is a separate SPARQL shape below
+# because "claimed" is a disjunction SHACL's property constraints can't express.
+# ---------------------------------------------------------------------------
+rgs:SkillShape a sh:NodeShape ;
+    sh:targetClass rg:Skill ;
+    sh:nodeKind sh:IRI ;
+    sh:pattern "^https://joseph-higaki\\.github\\.io/resume-graph/id/" ;
+    sh:property [ sh:path skos:prefLabel ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path skos:broader ; sh:class skos:Concept ; sh:minCount 1 ;
+                  sh:message "Every skill must sit in the category tree (skos:broader) — the site clusters by category." ] ;
+    sh:property [ sh:path rg:level ; sh:maxCount 1 ;
+                  sh:in ( "aware" "working" "proficient" "expert" ) ] ;
+    sh:property [ sh:path skos:closeMatch ; sh:nodeKind sh:IRI ;
+                  sh:pattern "^http://data\\.europa\\.eu/esco/" ;
+                  sh:message "escoMatch must be an ESCO IRI." ] ;
+    sh:property [ sh:path rg:evidencedBy ; sh:nodeKind sh:IRI ;
+                  sh:or ( [ sh:class rg:Project ] [ sh:class rg:Position ] ) ] .
+
+# The evidence rule — the structural anti-keyword-stuffing guarantee.
+# Claimed = has rg:level OR is referenced via rg:usedSkill. Claimed without
+# rg:evidencedBy = violation. Skills that merely exist (e.g. stubs an
+# Application rg:demands) are exempt: their missing evidence IS the gap signal.
+rgs:EvidenceRuleShape a sh:NodeShape ;
+    sh:targetClass rg:Skill ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Claimed skill has no evidence: add rg:evidencedBy pointing at a Project or Position, or drop the claim (rg:level / rg:usedSkill)." ;
+        sh:prefixes rgs:shapes ;
+        sh:select """
+            SELECT DISTINCT $this
+            WHERE {
+                { $this rg:level ?level . }
+                UNION
+                { ?work rg:usedSkill $this . }
+                FILTER NOT EXISTS { $this rg:evidencedBy ?evidence . }
+            }
+        """ ;
+    ] .
+
+# Advisory until M6 (ESCO mapping milestone): a skill without an ESCO match
+# reports as a Warning — visible in every validation run, never fatal.
+rgs:SkillEscoWarningShape a sh:NodeShape ;
+    sh:targetClass rg:Skill ;
+    sh:property [
+        sh:path skos:closeMatch ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "Skill has no ESCO mapping yet (escoMatch → skos:closeMatch); planned for M6." ;
+    ] .
+
+rgs:BulletShape a sh:NodeShape ;
+    sh:targetClass rg:Bullet ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path sdo:text ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:audience ; sh:minCount 1 ;
+                  sh:in ( "data-eng" "ai-eng" "delivery" "general" ) ] ;
+    sh:property [ sh:path rg:bulletOf ; sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:or ( [ sh:class rg:Position ] [ sh:class rg:Project ] ) ] ;
+    sh:property [ sh:path rg:order ; sh:datatype xsd:integer ; sh:maxCount 1 ] .
+
+rgs:EducationShape a sh:NodeShape ;
+    sh:targetClass rg:Education ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path sdo:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:credentialCategory ; sh:datatype xsd:string ; sh:minCount 1 ] ;
+    sh:property [ sh:path sdo:recognizedBy ; sh:class rg:Organization ; sh:minCount 1 ] .
+
+rgs:CertificationShape a sh:NodeShape ;
+    sh:targetClass rg:Certification ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path sdo:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:certifies ; sh:class rg:Skill ; sh:minCount 1 ] ;
+    sh:property [ sh:path sdo:recognizedBy ; sh:class rg:Organization ] .
+
+# No Application instances exist in this repo (private overlay only), but the
+# shape ships here so the merged private graph is held to the same gate.
+rgs:ApplicationShape a sh:NodeShape ;
+    sh:targetClass rg:Application ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path rg:targetRole ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:demands ; sh:class rg:Skill ] ;
+    sh:property [ sh:path rg:audience ;
+                  sh:in ( "data-eng" "ai-eng" "delivery" "general" ) ] ;
+    sh:property [ sh:path rg:summary ; sh:datatype xsd:string ; sh:maxCount 1 ] .
+
+# Category tree integrity: every concept is labeled and placed — broader for
+# children, topConceptOf at the top. Skills (subclass of skos:Concept) pass via
+# their broader link to a category.
+rgs:ConceptShape a sh:NodeShape ;
+    sh:targetClass skos:Concept ;
+    sh:property [ sh:path skos:prefLabel ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:or ( [ sh:property [ sh:path skos:broader ; sh:minCount 1 ] ]
+            [ sh:property [ sh:path skos:topConceptOf ; sh:minCount 1 ] ] ) ;
+    sh:message "A concept needs a place in the tree: broader (child) or topConceptOf (top)." .

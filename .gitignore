@@ -1,3 +1,6 @@
+# Source resume artifacts — PII (phone number); ingested via docs/upload_report_*.md
+input/
+
 # Secrets & local env
 .env
 *.env

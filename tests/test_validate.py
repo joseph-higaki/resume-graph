@@ -109,7 +109,7 @@ def test_roleframing_general_audience_rejected(tmp_path):
     (fdir / "dm-epam-general.md").write_text(
         "---\n"
         'type: "[[RoleFraming]]"\n'
-        'framingOf: "[[Delivery Manager — EPAM]]"\n'
+        'framingOf: "[[Delivery Manager Financial Services — EPAM]]"\n'
         "audience: general\n"
         'roleName: "Program Delivery Lead"\n'
         "---\n# dm-epam-general\n",
@@ -130,7 +130,7 @@ def test_roleframing_duplicate_position_audience_rejected(tmp_path):
         (fdir / f"{slug}.md").write_text(
             "---\n"
             'type: "[[RoleFraming]]"\n'
-            'framingOf: "[[Senior Software Engineer — Acme Consulting]]"\n'
+            'framingOf: "[[Senior Scrum Master — Verizon]]"\n'
             "audience: data-eng\n"
             f'roleName: "{name}"\n'
             f"---\n# {slug}\n",

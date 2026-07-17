@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Strip AI/Claude attribution from commit messages.
+#
+# Project rule: git history carries no "Co-Authored-By: Claude ..." trailer and
+# no "Generated with Claude Code" line. This hook is the deterministic backstop —
+# it removes them no matter what tool wrote the message.
+#
+# Activate once per clone (core.hooksPath is local config, not tracked):
+#     git config core.hooksPath .githooks
+#
+# Note: only Claude co-author lines are removed; human Co-Authored-By trailers
+# are preserved.
+set -euo pipefail
+
+msg_file="$1"
+
+sed -i -E \
+  -e '/^[Cc]o-[Aa]uthored-[Bb]y:.*[Cc]laude/d' \
+  -e '/[Gg]enerated with .*[Cc]laude [Cc]ode/d' \
+  "$msg_file"

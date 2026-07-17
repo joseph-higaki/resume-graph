@@ -1,0 +1,26 @@
+# Secrets & local env
+.env
+*.env
+!.env.example
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+
+# Terraform
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.*
+infra/*.tfvars
+!infra/*.tfvars.example
+
+# Claude Code local settings (personal; the project .claude/CLAUDE.md IS tracked)
+.claude/settings.local.json
+.claude/CLAUDE.local.md
+

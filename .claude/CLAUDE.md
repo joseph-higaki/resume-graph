@@ -113,6 +113,7 @@ Input: full graph (+ optional `--extra-graph` merged in) and an Application IRI.
 - SPARQL CONSTRUCT a subgraph: drop anything in `rg:excludes`, order/flag `rg:emphasizes` first, select bullets whose `rg:audience` matches the application's declared audiences, substitute the application's tailored summary for the default profile summary.
 - Output `dist/applications/<slug>/graph.ttl` and run both exports against it.
 - Must run cleanly with zero applications present (public CI never has any).
+- Per-audience `roleName` override (RoleFraming): schema shipped; substitution algorithm + reasoning in `docs/adr/0001-roleframing-projection.md`.
 
 ## Site direction
 - Astro static build; graph page hydrates Sigma.js (or D3 force) from `graph.jsonld`. Nodes colored by type; skills cluster around category nodes — the cloud cluster must read at a glance. Click node → side panel with details, prose excerpt, evidence links.

@@ -31,4 +31,4 @@ site:
 	@echo "target 'site' is not implemented yet (M4/M5)"
 
 clean:
-	rm -rf dist
+	rm -rf dist build

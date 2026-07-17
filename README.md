@@ -20,7 +20,7 @@ so this layout is organizational — moving a note changes no triples.
 | **schema** | `vault/_schema/`, `vault/context.jsonld`, `validation/` | The model: the `rg` ontology (classes + properties as notes), the SKOS skill-category vocabulary, the shared JSON-LD context, and the SHACL validation contract (`validation/shapes.ttl`). Changes rarely; architecturally significant. |
 | **mechanism** | `pipeline/`, `site/`, `queries/`, `api/`, `.github/`, `Makefile` | The machine that turns the vault into artifacts — exporter wrapper, validator, projection, site, CI. |
 
-Everything else (`journal/`, this README, `.claude/`, configs) is neutral.
+Everything else (`docs/`, this README, `.claude/`, configs) is neutral.
 
 ### Commit hygiene
 

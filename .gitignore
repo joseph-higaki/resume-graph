@@ -6,6 +6,8 @@ secrets/
 
 # Generated graph + exports — derived from the vault, never edited (CLAUDE.md rule 1)
 dist/
+# Intermediate exporter staging (build/layers/) — disposable, never published
+build/
 
 # Python
 __pycache__/

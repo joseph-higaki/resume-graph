@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# pre-commit — keep résumé-content commits pure (the repo's domain rule).
+#
+# Three domains, changing at different cadences:
+#   data       vault/_data/**                                  résumé content
+#   schema     vault/_schema/**, vault/context.jsonld, validation/**   model + SHACL contract
+#   mechanism  pipeline/ site/ queries/ api/ .github/ .githooks/ Makefile
+#
+# Rule: a commit touching DATA may not also touch schema or mechanism, so a
+# résumé-wording edit reads as a content change in the history, not an
+# architectural one. Neutral meta (journal/, README, .claude/, configs) may
+# ride with either side.
+#
+# Activate once per clone (core.hooksPath is local config, not tracked):
+#     make hooks        # or: git config core.hooksPath .githooks
+# Bypass a deliberate cross-domain commit (e.g. a structural migration) with:
+#     git commit --no-verify
+set -euo pipefail
+
+staged="$(git diff --cached --name-only)"
+# grep exits non-zero on no match; `|| true` keeps that from tripping set -e.
+match() { printf '%s\n' "$staged" | grep -E "$1" || true; }
+
+data="$(match '^vault/_data/')"
+other="$(match '^(vault/_schema/|vault/context\.jsonld|validation/|pipeline/|site/|queries/|api/|\.github/|\.githooks/|Makefile)')"
+
+if [ -n "$data" ] && [ -n "$other" ]; then
+  echo "✗ commit mixes résumé data (vault/_data/) with schema/mechanism:" >&2
+  printf '%s\n' "$other" | sed 's/^/    /' >&2
+  echo "  Split them into separate commits, or bypass with: git commit --no-verify" >&2
+  exit 1
+fi

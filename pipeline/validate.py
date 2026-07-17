@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""validate.py — the SHACL gate: dist/graph.ttl against ontology/shapes.ttl.
+"""validate.py — the SHACL gate: dist/graph.ttl against validation/shapes.ttl.
 
 allow_warnings=True is the severity contract: sh:Warning results (the advisory
 ESCO shape) print in the report but don't fail; any sh:Violation exits 1.
@@ -34,7 +34,7 @@ def run(graph_path: Path, shapes_path: Path) -> tuple[bool, str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate the built graph against the SHACL shapes.")
     parser.add_argument("--graph", type=Path, default=REPO_ROOT / "dist" / "graph.ttl")
-    parser.add_argument("--shapes", type=Path, default=REPO_ROOT / "ontology" / "shapes.ttl")
+    parser.add_argument("--shapes", type=Path, default=REPO_ROOT / "validation" / "shapes.ttl")
     args = parser.parse_args()
 
     if not args.graph.exists():

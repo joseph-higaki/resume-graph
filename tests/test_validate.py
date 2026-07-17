@@ -11,7 +11,7 @@ from pipeline import build, validate
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 REAL_VAULT = REPO_ROOT / "vault"
-SHAPES = REPO_ROOT / "ontology" / "shapes.ttl"
+SHAPES = REPO_ROOT / "validation" / "shapes.ttl"
 
 RG = "https://joseph-higaki.github.io/resume-graph/vocab/rg#"
 ID = "https://joseph-higaki.github.io/resume-graph/id/"
@@ -46,7 +46,7 @@ def test_esco_warning_reported_not_fatal(tmp_path):
 
 def test_claimed_skill_without_evidence_fails(tmp_path):
     vault = copy_vault(tmp_path)
-    (vault / "skills" / "Kubernetes.md").write_text(
+    (vault / "_data" / "skills" / "Kubernetes.md").write_text(
         "---\n"
         'type: "[[Skill]]"\n'
         "prefLabel: Kubernetes\n"
@@ -62,7 +62,7 @@ def test_claimed_skill_without_evidence_fails(tmp_path):
 
 def test_usedskill_reference_makes_skill_claimed(tmp_path):
     vault = copy_vault(tmp_path)
-    (vault / "skills" / "Kubernetes.md").write_text(
+    (vault / "_data" / "skills" / "Kubernetes.md").write_text(
         "---\n"
         'type: "[[Skill]]"\n'
         "prefLabel: Kubernetes\n"
@@ -70,7 +70,7 @@ def test_usedskill_reference_makes_skill_claimed(tmp_path):
         "---\n# Kubernetes\n",
         encoding="utf-8",
     )
-    (vault / "projects" / "K8s Migration.md").write_text(
+    (vault / "_data" / "projects" / "K8s Migration.md").write_text(
         "---\n"
         'type: "[[Project]]"\n'
         "name: K8s Migration\n"
@@ -88,7 +88,7 @@ def test_unclaimed_stub_skill_is_exempt(tmp_path):
     # A stub with no level and no usedSkill references — the shape an
     # Application-demanded skill has. Missing evidence must NOT fail it.
     vault = copy_vault(tmp_path)
-    (vault / "skills" / "Terraform.md").write_text(
+    (vault / "_data" / "skills" / "Terraform.md").write_text(
         "---\n"
         'type: "[[Skill]]"\n'
         "prefLabel: Terraform\n"

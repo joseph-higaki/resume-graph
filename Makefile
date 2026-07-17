@@ -1,9 +1,14 @@
 # resume-graph — every target runs through uv so the venv always matches uv.lock.
 UV := uv run
 
-.PHONY: all build validate test export project site clean
+.PHONY: all build validate test export project site hooks clean
 
 all: test build validate
+
+# Activate the tracked git hooks (core.hooksPath is local config, not tracked).
+# Run once per clone. Enforces the data/schema/mechanism commit-purity rule.
+hooks:
+	git config core.hooksPath .githooks
 
 build:
 	$(UV) python pipeline/build.py

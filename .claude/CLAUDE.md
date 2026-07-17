@@ -32,19 +32,21 @@ LinkedIn is a downstream copy-paste target, never a source. The project is itsel
 resume-graph/
 ├── .claude/CLAUDE.md
 ├── Makefile                       # build | validate | export | site | project | all
-├── vault/                         # SOURCE OF TRUTH (Vault-LD)
-│   ├── context.jsonld             # root @context: cross-cutting core + composes the two below
-│   ├── Ontologies/rg/             # rg: classes/properties as notes (folder names fixed by the exporter, SPEC §3)
-│   ├── Vocabularies/SkillCategories/  # SKOS concept tree: cloud → cloud-aws / cloud-gcp, data-eng, devops, delivery…
-│   ├── positions/                 # one note per role
-│   ├── organizations/             # employers/institutions (wiki-link targets for positions & education)
-│   ├── projects/                  # incl. this project itself (dogfood)
-│   ├── skills/                    # one note per skill
-│   ├── bullets/                   # one note per resume bullet (rg:Bullet — see authoring model)
-│   ├── education/
-│   ├── certs/
-│   └── profile.md                 # the schema:Person hub
-├── ontology/shapes.ttl            # SHACL (authored directly as Turtle; shapes are not vault content)
+├── vault/                         # SOURCE OF TRUTH (Vault-LD). Identity is name-based; folders are organizational.
+│   ├── context.jsonld             # root @context: cross-cutting core + composes the two schema contexts
+│   ├── _schema/                   # the model — changes rarely, architecturally significant
+│   │   ├── Ontologies/rg/         # rg: classes/properties as notes (Ontologies/Vocabularies names fixed by the exporter, SPEC §3)
+│   │   └── Vocabularies/SkillCategories/  # SKOS concept tree: cloud → cloud-aws / cloud-gcp, data-eng, devops, delivery…
+│   └── _data/                     # the résumé — changes often (commit-pure: never mixed with schema/mechanism)
+│       ├── positions/             # one note per role
+│       ├── organizations/         # employers/institutions (wiki-link targets for positions & education)
+│       ├── projects/              # incl. this project itself (dogfood)
+│       ├── skills/                # one note per skill
+│       ├── bullets/               # one note per resume bullet (rg:Bullet — see authoring model)
+│       ├── education/
+│       ├── certs/
+│       └── profile.md             # the schema:Person hub
+├── validation/shapes.ttl          # SHACL (authored directly as Turtle; not vault content)
 ├── pipeline/
 │   ├── vendor/vault_to_rdf.py     # pinned Vault-LD reference exporter (+ PIN file)
 │   ├── build.py                   # thin wrapper: vault → dist/graph.{ttl,jsonld} (framed)
@@ -69,7 +71,7 @@ resume-graph/
 ## Authoring model (Vault-LD)
 Frontmatter = triples; body = prose (narrative, learnings, impact stories — free to edit without touching the graph). Wiki-links are edges, resolved to IRIs via `context.jsonld`. Mint IRIs under `https://<domain>/id/…`.
 
-Example `vault/positions/Delivery Manager — EPAM.md`:
+Example `vault/_data/positions/Delivery Manager — EPAM.md`:
 ```markdown
 ---
 type: "[[Position]]"
@@ -85,9 +87,9 @@ Led delivery for a data platform… # TODO(owner)
 ## Learnings
 …
 ```
-**Bullet convention (decided in M1):** one small note per bullet in `vault/bullets/`, typed `[[Bullet]]` with `text`, `audience` (data-eng | ai-eng | delivery | general), `bulletOf` → owning Position/Project, and `order`. Rationale: Vault-LD never exports the body (SPEC §5.3) and the exporter has no blank-node support, so frontmatter notes are the only way audience-tagged bullets reach the graph. Applications later select audiences.
+**Bullet convention (decided in M1):** one small note per bullet in `vault/_data/bullets/`, typed `[[Bullet]]` with `text`, `audience` (data-eng | ai-eng | delivery | general), `bulletOf` → owning Position/Project, and `order`. Rationale: Vault-LD never exports the body (SPEC §5.3) and the exporter has no blank-node support, so frontmatter notes are the only way audience-tagged bullets reach the graph. Applications later select audiences.
 
-Example `vault/skills/AWS S3.md`:
+Example `vault/_data/skills/AWS S3.md`:
 ```markdown
 ---
 type: "[[Skill]]"
@@ -145,3 +147,4 @@ On push to main: uv setup → pytest → build → SHACL validate → exports �
 - Patches to the vendored exporter go in as clearly-marked diffs against the PIN commit.
 - Seed data uses realistic placeholders marked `# TODO(owner)`.
 - No employer/application names anywhere in this repo — that data is private-repo-only.
+- Three domains (see README): **data** (`vault/_data/`), **schema** (`vault/_schema/`, `vault/context.jsonld`, `validation/`), **mechanism** (everything else). A `.githooks/pre-commit` keeps data commits pure — never stage résumé content alongside schema/mechanism in one commit.

@@ -35,7 +35,7 @@
       "credentialCategory": "sdo:credentialCategory",
       "recognizedBy": { "@id": "sdo:recognizedBy", "@type": "@id" }
     },
-    "Ontologies/rg/context.jsonld",
-    "Vocabularies/SkillCategories/context.jsonld"
+    "_schema/Ontologies/rg/context.jsonld",
+    "_schema/Vocabularies/SkillCategories/context.jsonld"
   ]
 }

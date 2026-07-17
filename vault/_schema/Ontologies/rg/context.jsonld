@@ -12,6 +12,7 @@
     "certifies": { "@id": "rg:certifies", "@type": "@id", "@container": "@set" },
     "audience": "rg:audience",
     "bulletOf": { "@id": "rg:bulletOf", "@type": "@id" },
+    "framingOf": { "@id": "rg:framingOf", "@type": "@id" },
     "order": { "@id": "rg:order", "@type": "xsd:integer" },
     "demands": { "@id": "rg:demands", "@type": "@id", "@container": "@set" },
     "emphasizes": { "@id": "rg:emphasizes", "@type": "@id", "@container": "@set" },

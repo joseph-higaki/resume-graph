@@ -98,3 +98,44 @@ def test_unclaimed_stub_skill_is_exempt(tmp_path):
     )
     _, conforms, report = build_and_validate(vault, tmp_path / "out")
     assert conforms, report
+
+
+def test_roleframing_general_audience_rejected(tmp_path):
+    # 'general' == the Position's default roleName, so a general framing is
+    # meaningless — the shape's sh:in enumeration forbids it.
+    vault = copy_vault(tmp_path)
+    fdir = vault / "_data" / "framings"
+    fdir.mkdir(parents=True, exist_ok=True)
+    (fdir / "dm-epam-general.md").write_text(
+        "---\n"
+        'type: "[[RoleFraming]]"\n'
+        'framingOf: "[[Delivery Manager — EPAM]]"\n'
+        "audience: general\n"
+        'roleName: "Program Delivery Lead"\n'
+        "---\n# dm-epam-general\n",
+        encoding="utf-8",
+    )
+    _, conforms, report = build_and_validate(vault, tmp_path / "out")
+    assert not conforms
+    assert "general" in report
+
+
+def test_roleframing_duplicate_position_audience_rejected(tmp_path):
+    # Two framings on the same (Position, audience) — projection couldn't choose
+    # a roleName. The cross-node uniqueness guard (sh:sparql) must fire.
+    vault = copy_vault(tmp_path)
+    fdir = vault / "_data" / "framings"
+    fdir.mkdir(parents=True, exist_ok=True)
+    for slug, name in (("sse-acme-a", "Staff Engineer"), ("sse-acme-b", "Principal Engineer")):
+        (fdir / f"{slug}.md").write_text(
+            "---\n"
+            'type: "[[RoleFraming]]"\n'
+            'framingOf: "[[Senior Software Engineer — Acme Consulting]]"\n'
+            "audience: data-eng\n"
+            f'roleName: "{name}"\n'
+            f"---\n# {slug}\n",
+            encoding="utf-8",
+        )
+    _, conforms, report = build_and_validate(vault, tmp_path / "out")
+    assert not conforms
+    assert "share a Position and audience" in report

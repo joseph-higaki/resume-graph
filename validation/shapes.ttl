@@ -120,6 +120,42 @@ rgs:BulletShape a sh:NodeShape ;
                   sh:or ( [ sh:class rg:Position ] [ sh:class rg:Project ] ) ] ;
     sh:property [ sh:path rg:order ; sh:datatype xsd:integer ; sh:maxCount 1 ] .
 
+# ---------------------------------------------------------------------------
+# RoleFraming — an audience-specific override of a Position's roleName (M3).
+# The Position keeps its default; projection substitutes the framed wording
+# when an Application declares the matching audience.
+# ---------------------------------------------------------------------------
+rgs:RoleFramingShape a sh:NodeShape ;
+    sh:targetClass rg:RoleFraming ;
+    sh:nodeKind sh:IRI ;
+    sh:pattern "^https://joseph-higaki\\.github\\.io/resume-graph/id/" ;
+    sh:property [ sh:path rg:framingOf ; sh:class rg:Position ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:roleName ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:audience ; sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:in ( "data-eng" "ai-eng" "delivery" ) ;
+                  sh:message "A RoleFraming targets exactly one specific audience — never 'general' (that IS the Position's default roleName)." ] .
+
+# Determinism guard: projection substitutes by (Position, audience); two framings
+# on the same pair would make the substitution ambiguous. This is a cross-node
+# cardinality (two distinct nodes sharing a key), so — like the evidence rule — it
+# needs SPARQL, not a property constraint. Holds over the merged public+private
+# graph, so a private overlay can't silently collide with a public framing.
+rgs:RoleFramingUniqueShape a sh:NodeShape ;
+    sh:targetClass rg:RoleFraming ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Two RoleFramings share a Position and audience — projection can't choose one roleName." ;
+        sh:prefixes rgs:shapes ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this  rg:framingOf ?pos ; rg:audience ?aud .
+                ?other rg:framingOf ?pos ; rg:audience ?aud .
+                FILTER (?other != $this)
+            }
+        """ ;
+    ] .
+
 rgs:EducationShape a sh:NodeShape ;
     sh:targetClass rg:Education ;
     sh:nodeKind sh:IRI ;

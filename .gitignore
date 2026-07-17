@@ -26,4 +26,5 @@ infra/*.tfvars
 # Claude Code local settings (personal; the project .claude/CLAUDE.md IS tracked)
 .claude/settings.local.json
 .claude/CLAUDE.local.md
+next-prompts.md
 

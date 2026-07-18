@@ -5,6 +5,93 @@ handoff for a future Claude Code session to **interview the owner** and resolve 
 open item below. Requested as `doc/uppload_report_20260717.md` in `next-prompts.md`;
 normalized to `docs/upload_report_20260717.md`.
 
+> **STATUS — 2026-07-18: the interview was run. See "Interview resolutions" immediately
+> below.** Everything from "## Sources processed" onward is the original 2026-07-17
+> ingestion record, kept for history. Parts of it are now stale: several open items are
+> resolved, the two EPAM positions it names were replaced by four, and all three
+> RoleFramings were deleted. Trust the resolutions section over the historical body.
+
+---
+
+## Interview resolutions — 2026-07-18
+
+### Original checklist status
+
+1. **RoleFraming wordings + IBM title — RESOLVED.** All three RoleFraming *instances*
+   deleted (owner: "no audience override yet"); the `rg:RoleFraming` *class* stays for
+   the private repo. IBM title = "Team Leader - Application Development" (LinkedIn form).
+2. **Verizon / Scotiabank granularity — RESOLVED.** Verizon kept at 4 positions;
+   Scotiabank kept at 2 (standalone, not grouped); TransSolutions = 1 org, 3 positions.
+3. **IBM team size / HLS geographies — PARTIAL.** Geographies RESOLVED = Europe/LATAM/APAC
+   (LinkedIn). **IBM team size 11 vs 16 still PENDING.**
+4. **Org casing — RESOLVED.** LinkedIn casing (australworks, InOrbis Analytics,
+   TransSolutions Systems).
+5. **Date approvals — PENDING.** Month→day expansion and project startDate assumptions not
+   explicitly blessed. (FS split boundaries approved: FS-A ends 2022-12, FS-B 2023-01→2024-09.)
+6. **Cert/education date modeling + cloud-azure — PENDING.** Schema decision, untouched.
+7. **`ai` category — PENDING confirm.** Category exists and validates; not formally blessed.
+8. **Skill-level calibration + stubs — RESOLVED** (details below); stub *promotion* PARKED.
+9. **Skipped certs — PENDING.**
+10. **Canonical summary + jobTitle — PENDING.** Now interacts with the Semantic Web PM
+    headline; `profile` still reads "Delivery Manager - Healthcare & Life Sciences" /
+    "Software Engineer". Recommended next item.
+11. **Languages / honors — PENDING.**
+
+### EPAM restructure + new `rg:titleOfRecord` (beyond the checklist; `make all` green)
+
+A single employment with rotating functional roles over time is modeled as multiple
+`rg:Position` nodes sharing an `rg:titleOfRecord` (the HR title), each with its own
+`roleName` (headline) + dates. The export groups by (organization, titleOfRecord). The two
+old EPAM positions were **deleted** and replaced by four:
+
+| roleName | titleOfRecord | dates | engagement |
+|---|---|---|---|
+| Project Manager and Team Lead | Delivery Manager - Financial Services | 2022-02 → 2022-12 | Corporate Action Workflow Management |
+| Program Manager and Technical Product Owner | Delivery Manager - Financial Services | 2023-01 → 2024-09 | Personal Investor Data Modernization |
+| Delivery and Staffing Manager | Delivery Manager - Healthcare & Life Sciences | 2025-05 → 2025-09 | — (T&M staffing) |
+| Semantic Web Technologies Program Manager | Delivery Manager - Healthcare & Life Sciences | 2025-10 → present | — (evidence anchor: Ontology Engineering + Knowledge Graphs) |
+
+- `roleName` = export headline; `rg:titleOfRecord` = HR title, set **only** on grouped
+  positions (standalone ones omit it). **Do not de-duplicate the grouped EPAM entries —
+  the repetition is intentional.**
+- Engagement-specific bullets re-homed to their Project; role-level bullets to the Position.
+- `rg:titleOfRecord` is a new `owl:DatatypeProperty` — ontology note + rg context key +
+  `PositionShape` constraint. **Schema-domain: commit apart from data.**
+- HLS-B carries a `TODO(owner)` placeholder bullet — needs real scope/outcomes, and a
+  decision on whether hands-on SPARQL/SHACL/RDF/OWL claims are warranted from that role.
+
+### Fabricated node removed
+
+`Personal Finances Lakehouse` was scaffold, not a real project — **deleted**. It was the
+sole evidence for five skills, which correctly collapsed to stubs (the anti-stuffing
+mechanism working as designed): **dbt, Amazon Athena, AWS IAM, BigQuery, Google Cloud
+Storage**. Python/Docker/SQL/AWS S3 survived on their other, real evidence.
+
+### Skill calibration (item 8)
+
+- **Basis = peak proficiency** (recency conveyed by position dates), not current.
+- **AI skills** (Anthropic Claude, Generative AI, Prompt Engineering) stay `working`.
+- **Bumped aware→working:** Amazon Aurora, Java, OWL.
+- **Stay `aware`** (honest oversight): AWS Lambda, DynamoDB, ECS, EKS, Appian, GraphQL.
+- **BigQuery + GCS:** owner wants `working`, but they lost their (fabricated) evidence with
+  PFL — **parked** until a real Position/Project evidences them.
+- **Stub promotion (14 stubs) PARKED** pending the owner's incoming personal GitHub repos,
+  the intended real evidence anchors for the pivot skills.
+
+### Still-open reality check
+
+Confirm **`Biomedical GraphRAG Bench`** is a real repo — after the PFL removal it is the
+sole evidence for Docker and a key anchor for Knowledge Graphs / SPARQL / RDF / Python.
+
+### Commit hygiene (nothing committed yet)
+
+Three pure commits pending per the pre-commit purity hook:
+- **schema:** `rg:titleOfRecord` (ontology note, rg `context.jsonld`, `validation/shapes.ttl`).
+- **data:** 4 new positions, 2 position deletions, bullet/skill repoints, PFL deletion, level changes.
+- **mechanism:** `tests/test_validate.py` (two fixture retargets — the general-audience framing target and the AWS S3 evidence spot-check).
+
+---
+
 ## Sources processed
 
 | Source | File | Vintage | Role in reconciliation |

@@ -2,7 +2,7 @@
 type: "[[Skill]]"
 prefLabel: "Amazon Aurora"
 broader: "[[cloud-aws]]"
-level: aware
+level: working
 evidencedBy: [ "[[Personal Investor Data Modernization]]" ]
 ---
 # Amazon Aurora

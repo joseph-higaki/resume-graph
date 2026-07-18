@@ -3,6 +3,6 @@ type: "[[Skill]]"
 prefLabel: "Stakeholder Management"
 broader: "[[delivery]]"
 level: expert
-evidencedBy: [ "[[Delivery Manager Financial Services — EPAM]]", "[[Delivery Manager Healthcare and Life Sciences — EPAM]]" ]
+evidencedBy: [ "[[Program Manager and Technical Product Owner — EPAM]]", "[[Delivery and Staffing Manager — EPAM]]" ]
 ---
 # Stakeholder Management

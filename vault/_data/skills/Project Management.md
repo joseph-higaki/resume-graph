@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: "Project Management"
 broader: "[[delivery]]"
 level: expert
-evidencedBy: [ "[[Delivery Manager Healthcare and Life Sciences — EPAM]]", "[[Delivery Manager Financial Services — EPAM]]" ]
+evidencedBy: [ "[[Delivery and Staffing Manager — EPAM]]", "[[Program Manager and Technical Product Owner — EPAM]]" ]
 ---
 # Project Management
 

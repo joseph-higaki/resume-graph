@@ -3,6 +3,6 @@ type: "[[Skill]]"
 prefLabel: "Data Governance"
 broader: "[[data-eng]]"
 level: working
-evidencedBy: [ "[[Delivery Manager Financial Services — EPAM]]" ]
+evidencedBy: [ "[[Program Manager and Technical Product Owner — EPAM]]" ]
 ---
 # Data Governance

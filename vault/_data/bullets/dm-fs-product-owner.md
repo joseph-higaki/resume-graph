@@ -2,7 +2,7 @@
 type: "[[Bullet]]"
 text: "Acted as technical Product Owner: backlog management, stakeholder priority resolution, and team roadmap."
 audience: delivery
-bulletOf: "[[Delivery Manager Financial Services — EPAM]]"
-order: 4
+bulletOf: "[[Program Manager and Technical Product Owner — EPAM]]"
+order: 1
 ---
 # dm-fs-product-owner

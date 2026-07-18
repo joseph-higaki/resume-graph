@@ -2,9 +2,7 @@
 type: "[[Skill]]"
 prefLabel: Amazon Athena
 broader: "[[cloud-aws]]"
-level: aware
-evidencedBy: [ "[[Personal Finances Lakehouse]]" ]
 ---
 # Amazon Athena
 
-TODO(owner): confirm evidence.
+Stub — no evidence (was propped only by the removed scaffold project). Promote with a real level + evidence if genuinely used.

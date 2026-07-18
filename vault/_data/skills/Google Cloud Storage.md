@@ -2,9 +2,9 @@
 type: "[[Skill]]"
 prefLabel: Google Cloud Storage
 broader: "[[cloud-gcp]]"
-level: aware
-evidencedBy: [ "[[Personal Finances Lakehouse]]" ]
+level: working
+evidencedBy: [ "[[EMR Data Pipeline]]", "[[Spotify Insights]]", "[[Data Engineering Zoomcamp Coursework]]", "[[Patient Conditions and Weather]]" ]
 ---
 # Google Cloud Storage
 
-TODO(owner): confirm evidence.
+Landing zone / object storage feeding BigQuery external tables and DuckDB across self-directed GCP pipelines.

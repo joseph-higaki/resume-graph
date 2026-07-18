@@ -2,7 +2,7 @@
 type: "[[Skill]]"
 prefLabel: "OWL"
 broader: "[[data-eng]]"
-level: aware
+level: working
 evidencedBy: [ "[[Resume Graph]]" ]
 ---
 # OWL

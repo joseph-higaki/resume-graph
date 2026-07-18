@@ -3,6 +3,6 @@ type: "[[Skill]]"
 prefLabel: "Data Integration"
 broader: "[[data-eng]]"
 level: proficient
-evidencedBy: [ "[[Delivery Manager Financial Services — EPAM]]", "[[Personal Investor Data Modernization]]" ]
+evidencedBy: [ "[[Program Manager and Technical Product Owner — EPAM]]", "[[Personal Investor Data Modernization]]" ]
 ---
 # Data Integration

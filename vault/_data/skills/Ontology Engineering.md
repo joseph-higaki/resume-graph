@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: "Ontology Engineering"
 broader: "[[data-eng]]"
 level: working
-evidencedBy: [ "[[Resume Graph]]" ]
+evidencedBy: [ "[[Resume Graph]]", "[[Semantic Web Technologies Program Manager — EPAM]]" ]
 ---
 # Ontology Engineering
 

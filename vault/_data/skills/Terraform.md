@@ -2,7 +2,9 @@
 type: "[[Skill]]"
 prefLabel: "Terraform"
 broader: "[[devops]]"
+level: working
+evidencedBy: [ "[[RAG Bench Analytics]]", "[[EMR Data Pipeline]]", "[[Data Engineering Zoomcamp Coursework]]" ]
 ---
 # Terraform
 
-Certified by [[Data Engineering Zoomcamp]]; no position/project evidence yet.
+IaC provisioning of AWS and GCP data infrastructure (S3 + RDS Postgres; BigQuery + GCS) across self-directed projects.

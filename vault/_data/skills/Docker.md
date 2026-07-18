@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: Docker
 broader: "[[devops]]"
 level: working
-evidencedBy: [ "[[Biomedical GraphRAG Bench]]", "[[Personal Finances Lakehouse]]" ]
+evidencedBy: [ "[[Biomedical GraphRAG Bench]]" ]
 ---
 # Docker
 

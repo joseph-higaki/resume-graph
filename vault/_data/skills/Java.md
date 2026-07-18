@@ -2,7 +2,7 @@
 type: "[[Skill]]"
 prefLabel: "Java"
 broader: "[[software-eng]]"
-level: aware
+level: working
 evidencedBy: [ "[[Personal Investor Data Modernization]]" ]
 ---
 # Java

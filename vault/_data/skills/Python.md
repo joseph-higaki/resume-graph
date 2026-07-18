@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: "Python"
 broader: "[[data-eng]]"
 level: proficient
-evidencedBy: [ "[[Resume Graph]]", "[[Biomedical GraphRAG Bench]]", "[[Personal Finances Lakehouse]]", "[[Data Analytics Consultant — InOrbis Analytics]]" ]
+evidencedBy: [ "[[Resume Graph]]", "[[Biomedical GraphRAG Bench]]", "[[Data Analytics Consultant — InOrbis Analytics]]" ]
 ---
 # Python
 

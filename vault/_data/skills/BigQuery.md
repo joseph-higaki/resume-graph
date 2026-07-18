@@ -2,9 +2,9 @@
 type: "[[Skill]]"
 prefLabel: BigQuery
 broader: "[[cloud-gcp]]"
-level: aware
-evidencedBy: [ "[[Personal Finances Lakehouse]]" ]
+level: working
+evidencedBy: [ "[[EMR Data Pipeline]]", "[[Spotify Insights]]", "[[Data Engineering Zoomcamp Coursework]]" ]
 ---
 # BigQuery
 
-TODO(owner): confirm evidence.
+Warehouse + external tables over GCS parquet in self-directed GCP data pipelines; datasets provisioned with Terraform.

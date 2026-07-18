@@ -35,7 +35,7 @@ def test_real_vault_conforms(tmp_path):
     assert conforms, report
     # spot-check: evidence edges made it into the graph
     assert (URIRef(ID + "AWS%20S3"), URIRef(RG + "evidencedBy"),
-            URIRef(ID + "Personal%20Finances%20Lakehouse")) in g
+            URIRef(ID + "Billing%20and%20Accounting%20Dashboards")) in g
 
 
 def test_esco_warning_reported_not_fatal(tmp_path):
@@ -87,13 +87,16 @@ def test_usedskill_reference_makes_skill_claimed(tmp_path):
 def test_unclaimed_stub_skill_is_exempt(tmp_path):
     # A stub with no level and no usedSkill references — the shape an
     # Application-demanded skill has. Missing evidence must NOT fail it.
+    # Uses Amazon Athena: a deliberate no-evidence stub nothing links via
+    # usedSkill (Terraform is no longer a valid exemplar — repo projects now
+    # reference it, so a bare stub would be legitimately claimed-without-evidence).
     vault = copy_vault(tmp_path)
-    (vault / "_data" / "skills" / "Terraform.md").write_text(
+    (vault / "_data" / "skills" / "Amazon Athena.md").write_text(
         "---\n"
         'type: "[[Skill]]"\n'
-        "prefLabel: Terraform\n"
-        'broader: "[[devops]]"\n'
-        "---\n# Terraform\n",
+        "prefLabel: Amazon Athena\n"
+        'broader: "[[cloud-aws]]"\n'
+        "---\n# Amazon Athena\n",
         encoding="utf-8",
     )
     _, conforms, report = build_and_validate(vault, tmp_path / "out")
@@ -109,7 +112,7 @@ def test_roleframing_general_audience_rejected(tmp_path):
     (fdir / "dm-epam-general.md").write_text(
         "---\n"
         'type: "[[RoleFraming]]"\n'
-        'framingOf: "[[Delivery Manager Financial Services — EPAM]]"\n'
+        'framingOf: "[[Program Manager and Technical Product Owner — EPAM]]"\n'
         "audience: general\n"
         'roleName: "Program Delivery Lead"\n'
         "---\n# dm-epam-general\n",

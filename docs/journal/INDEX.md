@@ -4,3 +4,4 @@
 |---|---|---|---|---|---|---|---|---|
 | 2026-07-17 | 01 | Claude Fable 5 | _pending_ | _pending_ | _pending_ | _pending_ | _pending_ | M1 — vault + export core (classifier outage: token counts backfill pending) |
 | 2026-07-17 | 02 | Claude Opus 4.8 | 1,125 | 132,850 | 7,834,466 | 150,116 | 8,118,557 | Repo restructure (_schema/_data, validation/, data-purity hook) + M3 RoleFraming schema slice + ADR-0001 |
+| 2026-07-18 | 03 | Claude Opus 4.8 | 113 | 105,673 | 6,708,144 | 339,811 | 7,153,741 | Ingest 20 GitHub repos as Projects; promote 5 rescued stub skills; add rg:lastActivity recency; commit pending interview + ingestion (3 domain-pure) |

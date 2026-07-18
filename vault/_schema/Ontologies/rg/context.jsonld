@@ -19,6 +19,8 @@
     "excludes": { "@id": "rg:excludes", "@type": "@id", "@container": "@set" },
     "targetRole": "rg:targetRole",
     "status": "rg:status",
-    "summary": "rg:summary"
+    "summary": "rg:summary",
+    "titleOfRecord": "rg:titleOfRecord",
+    "lastActivity": { "@id": "rg:lastActivity", "@type": "xsd:date" }
   }
 }

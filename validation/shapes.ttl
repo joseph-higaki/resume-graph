@@ -37,6 +37,7 @@ rgs:PositionShape a sh:NodeShape ;
     sh:nodeKind sh:IRI ;
     sh:pattern "^https://joseph-higaki\\.github\\.io/resume-graph/id/" ;
     sh:property [ sh:path sdo:roleName ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:titleOfRecord ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
     sh:property [ sh:path rg:organization ; sh:class rg:Organization ; sh:minCount 1 ; sh:maxCount 1 ] ;
     sh:property [ sh:path rg:heldBy ; sh:class rg:Person ; sh:minCount 1 ; sh:maxCount 1 ] ;
     sh:property [ sh:path sdo:startDate ; sh:datatype xsd:date ; sh:minCount 1 ; sh:maxCount 1 ] ;
@@ -56,6 +57,7 @@ rgs:ProjectShape a sh:NodeShape ;
     sh:property [ sh:path sdo:description ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
     sh:property [ sh:path sdo:url ; sh:nodeKind sh:IRI ; sh:maxCount 1 ] ;
     sh:property [ sh:path sdo:startDate ; sh:datatype xsd:date ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:lastActivity ; sh:datatype xsd:date ; sh:maxCount 1 ] ;
     sh:property [ sh:path rg:usedSkill ; sh:class rg:Skill ] ;
     sh:property [ sh:path rg:deliveredDuring ; sh:class rg:Position ; sh:maxCount 1 ] .
 

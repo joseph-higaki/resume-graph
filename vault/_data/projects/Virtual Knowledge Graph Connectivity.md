@@ -5,7 +5,7 @@ description: "Virtual-knowledge-graph / OBDA connectivity and fidelity harness: 
 url: https://github.com/joseph-higaki/virtual-knowledge-graph-connectivity
 startDate: 2026-07-01
 lastActivity: 2026-07-01          # snapshot 2026-07-18 (last-push month)
-usedSkill: [ "[[Python]]", "[[Docker]]", "[[PostgreSQL]]", "[[Trino]]", "[[Apache Iceberg]]", "[[SPARQL]]", "[[Knowledge Graphs]]", "[[Ontology Engineering]]" ]
+usedSkill: [ "[[Python]]", "[[Docker]]", "[[PostgreSQL]]", "[[Trino]]", "[[Apache Iceberg]]", "[[SPARQL]]", "[[Knowledge Graphs]]", "[[Ontology Engineering]]", "[[Graph Databases]]" ]
 ---
 # Virtual Knowledge Graph Connectivity
 

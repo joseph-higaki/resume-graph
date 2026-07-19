@@ -1,4 +1,4 @@
-# CI — test, build, SHACL-validate on every push/PR. Pages deploy arrives in M5.
+# CI — test, build, SHACL-validate, export on every push/PR. Pages deploy arrives in M5.
 name: CI
 
 on:
@@ -19,12 +19,20 @@ jobs:
       # --locked: use uv.lock exactly; fail instead of re-resolving if it's stale.
       - run: uv sync --locked
 
+      # WeasyPrint (PDF export) links against Pango/Cairo at runtime — not a pip
+      # wheel. ubuntu-latest doesn't guarantee them, so install explicitly; the
+      # résumé HTML has no raster images, so Pango+PangoFT2 is the full set.
+      - run: sudo apt-get update && sudo apt-get install -y libpango-1.0-0 libpangoft2-1.0-0
+
       - run: make all
 
-      # The built graph, downloadable per run for inspection.
+      # Built graph + derived exports, downloadable per run for inspection.
       - uses: actions/upload-artifact@v4
         with:
-          name: graph
+          name: graph-and-exports
           path: |
             dist/graph.ttl
             dist/graph.jsonld
+            dist/graph.html
+            dist/resume.pdf
+            dist/resume.json

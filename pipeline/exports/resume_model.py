@@ -62,6 +62,7 @@ class Project:
     during_iri: str | None       # owning Position IRI, if any
     bullets: list[Bullet] = field(default_factory=list)
     skills: list[str] = field(default_factory=list)
+    emphasized: bool = False     # rg:emphasizes on a projection's Application
 
 
 @dataclass
@@ -73,6 +74,7 @@ class Skill:
     category_label: str | None
     parent_category_iri: str | None
     evidence_count: int
+    emphasized: bool = False     # rg:emphasizes on a projection's Application
 
 
 @dataclass
@@ -182,7 +184,19 @@ def _position_sort_key(p: Position) -> tuple:
 
 
 def _skill_sort_key(s: Skill) -> tuple:
-    return (-LEVEL_ORDER.get(s.level or "", 0), s.label.lower())
+    return (not s.emphasized, -LEVEL_ORDER.get(s.level or "", 0), s.label.lower())
+
+
+def _emphasized_iris(g: Graph) -> set[str]:
+    """IRIs an Application marks `rg:emphasizes` — empty for a non-projected graph.
+
+    Emphasis deliberately reorders Projects and Skills only. Positions stay in
+    reverse-chronological order: a reader parses an experience section by date,
+    so hoisting one role out of sequence reads as a bug, not as emphasis. A
+    position gets emphasized by keeping it and excluding its neighbours."""
+    return {str(r.n) for r in g.query(
+        "SELECT ?n WHERE { ?app a rg:Application ; rg:emphasizes ?n }",
+        initNs={"rg": RG})}
 
 
 # --------------------------------------------------------------------------- #
@@ -225,6 +239,7 @@ def _skills_for(g: Graph, subject: URIRef) -> list[str]:
 def build_model(graph_path: Path = DEFAULT_GRAPH) -> ResumeModel:
     g = Graph().parse(graph_path, format="turtle")
     ns = {"rg": RG, "sdo": SDO, "skos": SKOS, "rdfs": RDFS}
+    emphasized = _emphasized_iris(g)
 
     # basics
     brow = next(iter(g.query("""
@@ -276,8 +291,10 @@ def build_model(graph_path: Path = DEFAULT_GRAPH) -> ResumeModel:
             iri=str(r.proj), name=str(r.name), description=_s(r.desc),
             start=_s(r.start), during_iri=_s(r.during),
             bullets=_bullets_for(g, r.proj), skills=_skills_for(g, r.proj),
+            emphasized=str(r.proj) in emphasized,
         ))
-    projects.sort(key=lambda p: p.start or "", reverse=True)
+    # Emphasized projects lead; the rest stay newest-first within each block.
+    projects.sort(key=lambda p: (p.emphasized, p.start or ""), reverse=True)
 
     # categories (SKOS concept tree)
     categories: list[Category] = []
@@ -305,6 +322,7 @@ def build_model(graph_path: Path = DEFAULT_GRAPH) -> ResumeModel:
             category_iri=cat_iri, category_label=_s(r.catLabel),
             parent_category_iri=parent_of.get(cat_iri),
             evidence_count=int(r.evc) if r.evc is not None else 0,
+            emphasized=str(r.sk) in emphasized,
         ))
 
     # certifications

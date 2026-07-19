@@ -1,8 +1,17 @@
 # ADR 0001 — RoleFraming: per-audience `roleName` override
 
-**Status:** Accepted. Schema + shapes + SHACL tests **implemented** (`1d39525`
-schema, `3f8dd6f` seed data). The `project.py` substitution in §4 is **pending** —
-it lands with M3-core, because `pipeline/project.py` does not exist yet.
+**Status:** Accepted and **fully implemented**. Schema + shapes + SHACL tests
+landed in `1d39525`; the `project.py` substitution specified in §4 landed with
+M3-core (`_apply_role_framings` + `_strip_framings`), covered by
+`tests/test_project.py`.
+
+**Caveat — no framing data currently exists.** The seed framing from `3f8dd6f`
+targeted `[[Delivery Manager — EPAM]]`, a note the EPAM `titleOfRecord`
+restructure (`d296405`) dissolved into per-period positions; it was deleted
+along with its target rather than retargeted. `vault/_data/framings/` is
+therefore empty and the code path is exercised only by test overlays. The
+"as engineer / as delivery lead" site toggle in §3 has no data behind it until
+a framing is re-authored against a surviving Position.
 
 **Date:** 2026-07-17
 **Context prompt:** "resume customization by application" (`next-prompts.md`).
@@ -154,18 +163,32 @@ outgoing triples removes it entirely.
 
 ## 6. Remaining work
 
-- [ ] `pipeline/project.py` Steps A–C (this spec), inside M3-core.
-- [ ] Projection tests (distinct from the SHACL tests already shipped):
-  - app declaring `ai-eng` → EPAM position `roleName` becomes the framed value;
-    other positions keep their default.
-  - app with no matching framing → default preserved.
-  - two conflicting specific-audience framings for one position → `ProjectionError`.
-  - projected graph contains **zero** `rg:RoleFraming` triples (scaffolding stripped).
-  - zero-application projection runs clean, `roleName`s unchanged.
+- [x] `pipeline/project.py` Steps A–C (this spec), inside M3-core.
+- [x] Projection tests (distinct from the SHACL tests already shipped), all in
+  `tests/test_project.py`:
+  - [x] app declaring a matching audience → position `roleName` becomes the framed
+    value; other positions keep their default
+    (`test_framing_applies_for_matching_audience`,
+    `test_other_positions_keep_their_default_role_name`).
+  - [x] app with no matching framing → default preserved
+    (`test_no_matching_framing_preserves_default`).
+  - [x] two conflicting specific-audience framings → `ProjectionError`
+    (`test_conflicting_framings_raise`).
+  - [x] projected graph contains zero `rg:RoleFraming` *instances*
+    (`test_framings_are_stripped_from_the_projection`). Note the assertion is on
+    `rdf:type` specifically: the schema layer legitimately keeps `rg:RoleFraming`
+    as the object of the ontology's `domainIncludes` declarations, so a bare
+    "no rg:RoleFraming anywhere" check fails against a correct graph.
+  - [x] zero-application projection runs clean, `roleName`s unchanged
+    (`test_no_applications_is_a_clean_noop`, `test_cli_without_overlay_succeeds`).
+- [ ] Re-author a framing against a surviving Position (see the status caveat).
 
 ## 7. References
 
 - Schema commit `1d39525`; seed-data commit `3f8dd6f`.
 - SHACL tests: `tests/test_validate.py::test_roleframing_*`.
-- Seed example: `vault/_data/framings/dm-epam-ai-eng.md`.
+- Projection tests: `tests/test_project.py`.
+- Seed example: `vault/_data/framings/dm-epam-ai-eng.md` — **removed** in
+  `d296405`; see the status caveat. `git show 3f8dd6f:vault/_data/framings/dm-epam-ai-eng.md`
+  for the authoring shape.
 - Brief: `.claude/CLAUDE.md` → "Application projection (`pipeline/project.py`)".

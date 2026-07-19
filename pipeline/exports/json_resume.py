@@ -107,6 +107,14 @@ def _prune(value):
     return value
 
 
+def write_json(graph: Path, out: Path) -> dict:
+    """graph → JSON Resume document on disk; returns it for the caller's summary."""
+    doc = to_json_resume(build_model(graph))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n")
+    return doc
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build dist/resume.json from the graph.")
     parser.add_argument("--graph", type=Path, default=REPO_ROOT / "dist" / "graph.ttl")
@@ -117,9 +125,7 @@ def main() -> int:
         print(f"error: {args.graph} not found — run `make build` first", file=sys.stderr)
         return 1
 
-    doc = to_json_resume(build_model(args.graph))
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n")
+    doc = write_json(args.graph, args.out)
     print(f"json-resume: {len(doc.get('work', []))} roles, "
           f"{len(doc.get('skills', []))} skill groups -> {args.out}")
     return 0

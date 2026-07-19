@@ -34,8 +34,13 @@ serve:
 	@echo "serving dist/ → http://localhost:8000/graph.html  (Ctrl-C to stop)"
 	@cd dist && $(UV) python -m http.server 8000
 
-project:
-	@echo "target 'project' is not implemented yet (M3)"
+# M3: application projection. Bare `make project` is a clean no-op here — this
+# repo holds no Applications. The private overlay repo drives it with:
+#   make project EXTRA=../resume-applications/dist/overlay.ttl APP=some-slug
+# APP is optional; without it every Application in the merged graph is projected.
+project: build
+	$(UV) python -m pipeline.project --export \
+	  $(if $(EXTRA),--extra-graph $(EXTRA)) $(if $(APP),--application $(APP))
 
 # M4/M5 = the full Astro + Sigma + Comunica site. The lightweight preview lives
 # in `export` (dist/graph.html); this remains the placeholder for the real site.

@@ -220,6 +220,19 @@ footer { margin-top: 14pt; padding-top: 6pt; border-top: 1px solid var(--rule);
 """
 
 
+def write_pdf(graph: Path, out: Path, html_out: Path | None = None) -> Path:
+    """graph → PDF (+ its source HTML). The importable entry point: `project.py`
+    calls this per application, `main()` only adds the CLI."""
+    from weasyprint import HTML  # deferred: heavy import, keeps model import light
+
+    doc = render_html(build_model(graph))
+    html_out = html_out or out.with_suffix(".html")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    html_out.write_text(doc, encoding="utf-8")
+    HTML(string=doc, base_url=str(out.parent)).write_pdf(str(out))
+    return html_out
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build dist/resume.pdf (+ resume.html) from the graph.")
     parser.add_argument("--graph", type=Path, default=REPO_ROOT / "dist" / "graph.ttl")
@@ -232,15 +245,7 @@ def main() -> int:
         print(f"error: {args.graph} not found — run `make build` first", file=sys.stderr)
         return 1
 
-    from weasyprint import HTML  # deferred: heavy import, keeps model import light
-
-    m = build_model(args.graph)
-    doc = render_html(m)
-
-    html_out = args.html_out or args.out.with_suffix(".html")
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    html_out.write_text(doc, encoding="utf-8")
-    HTML(string=doc, base_url=str(args.out.parent)).write_pdf(str(args.out))
+    html_out = write_pdf(args.graph, args.out, args.html_out)
     print(f"pdf: {args.out} ({args.out.stat().st_size // 1024} KB)  html: {html_out}")
     return 0
 

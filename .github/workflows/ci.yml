@@ -1,6 +1,6 @@
 # CI — test, build, SHACL-validate, export on every push/PR.
-# Pages deploy below is a minimal stand-in (dist/graph.html as index.html);
-# the full Astro site replaces it in M5 without changing this deploy mechanism.
+# Pages deploy below publishes only dist/graph.html (as index.html) — a minimal
+# stand-in until the full Astro site (M5) replaces it via the same mechanism.
 name: CI
 
 on:
@@ -46,13 +46,13 @@ jobs:
             dist/resume.pdf
             dist/resume.json
 
-      # graph.html is the landing page; other exports stay reachable by path
-      # (e.g. /resume.pdf) since the whole dist/ dir is uploaded below.
-      - run: cp dist/graph.html dist/index.html
+      # Pages artifact holds only graph.html (as index.html) — a staging dir
+      # keeps resume.pdf/json/ttl/jsonld off the published site for now.
+      - run: mkdir -p pages && cp dist/graph.html pages/index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: pages
 
   deploy-pages:
     needs: build-validate

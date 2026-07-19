@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: SPARQL
 broader: "[[data-eng]]"
 level: working
-evidencedBy: [ "[[Resume Graph]]", "[[Biomedical GraphRAG Bench]]" ]
+evidencedBy: [ "[[Resume Graph]]", "[[Biomedical GraphRAG Bench]]", "[[Semantic Web Technologies Program Manager — EPAM]]" ]
 ---
 # SPARQL
 

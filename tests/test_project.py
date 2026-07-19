@@ -298,3 +298,27 @@ def test_real_position_titles_survive_the_headline_swap(graph_ttl, tmp_path):
     before = {str(o) for o in g.objects(None, SDO.roleName)}
     out, _ = project.project(g, APP)
     assert {str(o) for o in out.objects(None, SDO.roleName)} == before
+
+
+# --- the résumé asserts only claimed skills --------------------------------- #
+
+def test_demanded_stub_never_reaches_the_resume(graph_ttl, tmp_path):
+    """A demanded-but-unheld skill is gap data, not a CV line.
+
+    The evidence rule exempts unclaimed skills from validation so these stubs
+    can exist; the exports must still refuse to print them, or a tailored CV
+    would list precisely the skills the applicant lacks."""
+    from pipeline.exports.resume_model import build_model
+
+    stub = URIRef(ID + "Totally-Unheld-Skill")
+    g = merged(graph_ttl, tmp_path, app_note(f"rg:demands <{stub}> ;") + f"""
+<{stub}> a rg:Skill ;
+    <http://www.w3.org/2004/02/skos/core#prefLabel> "Totally-Unheld-Skill" .
+""")
+    out, _ = project.project(g, APP)
+    projected = tmp_path / "stub.ttl"
+    out.serialize(destination=projected, format="turtle")
+
+    assert (stub, None, None) in out                      # kept in the graph
+    model = build_model(projected)
+    assert "Totally-Unheld-Skill" not in {s.label for s in model.skills}

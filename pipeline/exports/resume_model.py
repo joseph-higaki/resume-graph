@@ -306,12 +306,25 @@ def build_model(graph_path: Path = DEFAULT_GRAPH) -> ResumeModel:
         categories.append(Category(
             iri=str(r.c), label=str(r.label), parent_iri=_s(r.parent)))
 
-    # skills
+    # Skills — CLAIMED ones only, using the SHACL evidence rule's own definition
+    # of claimed (rg:level OR referenced via rg:usedSkill).
+    #
+    # The gate exempts unclaimed skills from needing evidence, precisely so an
+    # Application's demanded-but-unheld stubs can exist. Without this filter the
+    # exports still PRINT those stubs, so a tailored CV would list exactly the
+    # skills the applicant does not have — the keyword stuffing the whole rule
+    # exists to prevent. It also drops uncalibrated imports (a bare skill note
+    # with no level, no usage, no evidence) from the résumé.
+    #
+    # Export-layer, not projection-layer, on purpose: the graph should keep every
+    # skill node for the site, SPARQL, and gap analysis. It is the *résumé* that
+    # may only assert what is claimed.
     skills: list[Skill] = []
     parent_of = {c.iri: c.parent_iri for c in categories}
     for r in g.query("""
         SELECT ?sk ?label ?level ?cat ?catLabel (COUNT(?ev) AS ?evc) WHERE {
             ?sk a rg:Skill ; skos:prefLabel ?label .
+            FILTER EXISTS { { ?sk rg:level ?lv } UNION { ?work rg:usedSkill ?sk } }
             OPTIONAL { ?sk rg:level ?level }
             OPTIONAL { ?sk skos:broader ?cat . ?cat skos:prefLabel ?catLabel }
             OPTIONAL { ?sk rg:evidencedBy ?ev }

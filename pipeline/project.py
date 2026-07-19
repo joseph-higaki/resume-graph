@@ -219,6 +219,29 @@ def _prune_unevidenced_claims(g: Graph, app: URIRef) -> tuple[int, int]:
     return purged, demoted
 
 
+def _substitute_job_title(g: Graph, app: URIRef) -> bool:
+    """Retarget the Person's `sdo:jobTitle` to the Application's `rg:targetRole`.
+
+    The header is the first thing read and the cheapest place to be filtered out:
+    a title of record that names the wrong discipline can end the review before
+    the evidence is seen. Substituting the target role is the same honest
+    re-emphasis RoleFraming applies to positions (ADR 0001 §1) — a CV headline
+    states the role applied for, while the Experience section keeps every real
+    title unchanged, so nothing here claims a title that was never held.
+
+    `rg:targetRole` is mandatory on an Application (ApplicationShape), so this
+    always fires during a projection and never during a plain build."""
+    target = next(g.objects(app, RG.targetRole), None)
+    if target is None:
+        return False
+    persons = [URIRef(str(r.p)) for r in g.query(
+        "SELECT ?p WHERE { ?p a rg:Person }", initNs=NS)]
+    for person in persons:
+        g.remove((person, SDO.jobTitle, None))
+        g.add((person, SDO.jobTitle, Literal(str(target))))
+    return bool(persons)
+
+
 def _substitute_summary(g: Graph, app: URIRef) -> bool:
     """Swap the Person's default `sdo:description` for the Application's summary.
 
@@ -259,9 +282,11 @@ def project(graph: Graph, app: URIRef) -> tuple[Graph, dict]:
     excluded = _apply_excludes(g, app)
     purged, demoted = _prune_unevidenced_claims(g, app)   # must follow excludes
     summarized = _substitute_summary(g, app)
+    retitled = _substitute_job_title(g, app)
     stripped = _strip_framings(g)
 
     return g, {
+        "job_title_substituted": retitled,
         "triples_before": before,
         "triples_after": len(g),
         "bullets_dropped": dropped_bullets,

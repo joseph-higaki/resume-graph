@@ -278,3 +278,23 @@ def test_projected_graph_still_passes_the_shacl_gate(graph_ttl, tmp_path):
     out.serialize(destination=projected, format="turtle")
     conforms, report = validate.run(projected, SHAPES)
     assert conforms, report
+
+
+# --- headline retargeting --------------------------------------------------- #
+
+def test_job_title_becomes_the_target_role(graph_ttl, tmp_path):
+    """The CV header states the role applied for, not the title of record."""
+    g = merged(graph_ttl, tmp_path, app_note())
+    person = next(iter(g.subjects(RDF.type, RG.Person)))
+    assert "Delivery Manager" in str(next(g.objects(person, SDO.jobTitle)))
+    out, stats = project.project(g, APP)
+    assert stats["job_title_substituted"]
+    assert str(next(out.objects(person, SDO.jobTitle))) == "Knowledge Graph Engineer"
+
+
+def test_real_position_titles_survive_the_headline_swap(graph_ttl, tmp_path):
+    """Retargeting the header must not rewrite held titles — that would be a lie."""
+    g = merged(graph_ttl, tmp_path, app_note())
+    before = {str(o) for o in g.objects(None, SDO.roleName)}
+    out, _ = project.project(g, APP)
+    assert {str(o) for o in out.objects(None, SDO.roleName)} == before

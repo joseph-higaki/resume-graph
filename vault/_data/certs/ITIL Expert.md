@@ -2,6 +2,7 @@
 type: "[[Certification]]"
 name: "ITIL Expert"
 recognizedBy: "[[EXIN]]"
+issued: 2015-07
 certifies: [ "[[ITIL]]" ]
 ---
 # ITIL Expert

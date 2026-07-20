@@ -2,6 +2,8 @@
 type: "[[Certification]]"
 name: "Claude Certified Architect – Foundations Certification"
 recognizedBy: "[[Anthropic]]"
+issued: 2026-05
+expires: 2026-11
 certifies: [ "[[Prompt Engineering]]", "[[Generative AI]]", "[[Anthropic Claude]]", "[[Anthropic API]]", "[[Model Context Protocol]]" ]
 ---
 # Claude Certified Architect Foundations

@@ -2,6 +2,7 @@
 type: "[[Certification]]"
 name: "Agile Scrum Master"
 recognizedBy: "[[EXIN]]"
+issued: 2017-07
 certifies: [ "[[Scrum]]" ]
 ---
 # Agile Scrum Master EXIN

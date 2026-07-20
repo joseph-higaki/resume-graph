@@ -3,6 +3,8 @@ type: "[[Education]]"
 name: "Master in Big Data & Analytics"
 credentialCategory: "master degree"
 recognizedBy: "[[EAE Business School]]"
+startDate: 2020-01-01
+endDate: 2021-12-31
 ---
 # Master in Big Data and Analytics
 

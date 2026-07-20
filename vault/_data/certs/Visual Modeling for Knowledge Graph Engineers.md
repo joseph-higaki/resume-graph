@@ -2,6 +2,7 @@
 type: "[[Certification]]"
 name: "Visual Modeling for Knowledge Graph Engineers"
 recognizedBy: "[[metaphacts]]"
+issued: 2026-05
 certifies: [ "[[RDF]]", "[[RDFS]]", "[[OWL]]", "[[SPARQL]]", "[[SHACL]]", "[[Knowledge Graphs]]" ]
 ---
 # Visual Modeling for Knowledge Graph Engineers

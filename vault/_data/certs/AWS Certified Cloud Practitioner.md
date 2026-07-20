@@ -2,6 +2,8 @@
 type: "[[Certification]]"
 name: "AWS Certified Cloud Practitioner"
 recognizedBy: "[[Amazon Web Services]]"
+issued: 2024-04
+expires: 2027-04
 certifies: [ "[[AWS S3]]", "[[AWS IAM]]" ]
 ---
 # AWS Certified Cloud Practitioner

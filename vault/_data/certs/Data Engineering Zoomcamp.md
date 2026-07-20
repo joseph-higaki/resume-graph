@@ -2,6 +2,7 @@
 type: "[[Certification]]"
 name: "Data Engineering Zoomcamp"
 recognizedBy: "[[DataTalksClub]]"
+issued: 2025-04
 certifies: [ "[[Apache Airflow]]", "[[Docker]]", "[[Python]]", "[[dbt]]", "[[Data Warehousing]]", "[[ETL]]", "[[BigQuery]]", "[[Google Cloud Storage]]", "[[Terraform]]", "[[Looker]]" ]
 ---
 # Data Engineering Zoomcamp

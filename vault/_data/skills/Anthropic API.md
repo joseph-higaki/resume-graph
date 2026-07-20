@@ -2,6 +2,7 @@
 type: "[[Skill]]"
 prefLabel: "Anthropic API"
 broader: "[[ai]]"
+level: aware
 ---
 # Anthropic API
 

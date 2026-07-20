@@ -2,6 +2,7 @@
 type: "[[Certification]]"
 name: "Microsoft Certified: Azure Data Fundamentals"
 recognizedBy: "[[Microsoft]]"
+issued: 2024-06
 certifies: [ "[[Azure Synapse Analytics]]" ]
 ---
 # Microsoft Certified Azure Data Fundamentals

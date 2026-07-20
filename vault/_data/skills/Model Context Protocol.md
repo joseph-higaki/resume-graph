@@ -2,6 +2,7 @@
 type: "[[Skill]]"
 prefLabel: "Model Context Protocol"
 broader: "[[ai]]"
+level: aware
 ---
 # Model Context Protocol
 

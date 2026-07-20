@@ -2,6 +2,7 @@
 type: "[[Certification]]"
 name: "App Building for Knowledge Graph Application Engineers"
 recognizedBy: "[[metaphacts]]"
+issued: 2026-05
 certifies: [ "[[Knowledge Graphs]]" ]
 ---
 # App Building for Knowledge Graph Application Engineers

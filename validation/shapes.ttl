@@ -78,17 +78,20 @@ rgs:SkillShape a sh:NodeShape ;
                   sh:pattern "^http://data\\.europa\\.eu/esco/" ;
                   sh:message "escoMatch must be an ESCO IRI." ] ;
     sh:property [ sh:path rg:evidencedBy ; sh:nodeKind sh:IRI ;
-                  sh:or ( [ sh:class rg:Project ] [ sh:class rg:Position ] ) ] .
+                  sh:or ( [ sh:class rg:Project ] [ sh:class rg:Position ] [ sh:class rg:Bullet ] ) ] .
 
 # The evidence rule — the structural anti-keyword-stuffing guarantee.
 # Claimed = has rg:level OR is referenced via rg:usedSkill. Claimed without
-# rg:evidencedBy = violation. Skills that merely exist (e.g. stubs an
-# Application rg:demands) are exempt: their missing evidence IS the gap signal.
+# evidence = violation. Two independent evidence channels satisfy the gate:
+# rg:evidencedBy ("used in real work") or rg:certifies from a Certification
+# ("attested by credential") — either is sufficient (decision 2026-07-20 #3).
+# Skills that merely exist (e.g. stubs an Application rg:demands) are exempt:
+# their missing evidence IS the gap signal.
 rgs:EvidenceRuleShape a sh:NodeShape ;
     sh:targetClass rg:Skill ;
     sh:sparql [
         a sh:SPARQLConstraint ;
-        sh:message "Claimed skill has no evidence: add rg:evidencedBy pointing at a Project or Position, or drop the claim (rg:level / rg:usedSkill)." ;
+        sh:message "Claimed skill has no evidence: add rg:evidencedBy pointing at a Project, Position, or Bullet, or rg:certifies from a Certification, or drop the claim (rg:level / rg:usedSkill)." ;
         sh:prefixes rgs:shapes ;
         sh:select """
             SELECT DISTINCT $this
@@ -97,6 +100,7 @@ rgs:EvidenceRuleShape a sh:NodeShape ;
                 UNION
                 { ?work rg:usedSkill $this . }
                 FILTER NOT EXISTS { $this rg:evidencedBy ?evidence . }
+                FILTER NOT EXISTS { ?cert rg:certifies $this . }
             }
         """ ;
     ] .
@@ -163,14 +167,20 @@ rgs:EducationShape a sh:NodeShape ;
     sh:nodeKind sh:IRI ;
     sh:property [ sh:path sdo:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
     sh:property [ sh:path sdo:credentialCategory ; sh:datatype xsd:string ; sh:minCount 1 ] ;
-    sh:property [ sh:path sdo:recognizedBy ; sh:class rg:Organization ; sh:minCount 1 ] .
+    sh:property [ sh:path sdo:recognizedBy ; sh:class rg:Organization ; sh:minCount 1 ] ;
+    sh:property [ sh:path rg:issued ; sh:datatype xsd:gYearMonth ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:expires ; sh:datatype xsd:gYearMonth ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:url ; sh:nodeKind sh:IRI ; sh:maxCount 1 ] .
 
 rgs:CertificationShape a sh:NodeShape ;
     sh:targetClass rg:Certification ;
     sh:nodeKind sh:IRI ;
     sh:property [ sh:path sdo:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
     sh:property [ sh:path rg:certifies ; sh:class rg:Skill ; sh:minCount 1 ] ;
-    sh:property [ sh:path sdo:recognizedBy ; sh:class rg:Organization ] .
+    sh:property [ sh:path sdo:recognizedBy ; sh:class rg:Organization ] ;
+    sh:property [ sh:path rg:issued ; sh:datatype xsd:gYearMonth ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:expires ; sh:datatype xsd:gYearMonth ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:url ; sh:nodeKind sh:IRI ; sh:maxCount 1 ] .
 
 # No Application instances exist in this repo (private overlay only), but the
 # shape ships here so the merged private graph is held to the same gate.

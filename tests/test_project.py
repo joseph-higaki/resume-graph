@@ -154,12 +154,17 @@ def sole_evidence_pair(g: Graph) -> tuple[URIRef, URIRef]:
     """A (project, skill) where that Project is the skill's only evidence.
 
     Derived, not hardcoded: which skill happens to rest on one project changes
-    as the vault grows, and a test that names a note would rot silently."""
+    as the vault grows, and a test that names a note would rot silently.
+
+    "Sole" spans both evidence channels — a skill some Certification rg:certifies
+    survives its project being excluded, so returning one here would hand the
+    caller a pair that is supposed not to purge."""
     for skill in sorted(set(g.subjects(RG.level, None)), key=str):
         evidence = list(g.objects(skill, RG.evidencedBy))
-        if len(evidence) == 1 and (evidence[0], RDF.type, RG.Project) in g:
+        if (len(evidence) == 1 and (evidence[0], RDF.type, RG.Project) in g
+                and not list(g.subjects(RG.certifies, skill))):
             return evidence[0], skill
-    pytest.skip("no skill in the current vault rests on a single Project")
+    pytest.skip("no skill in the current vault rests on a single uncertified Project")
 
 
 def test_excluding_sole_evidence_purges_the_claim(graph_ttl, tmp_path):

@@ -198,12 +198,21 @@ def _prune_unevidenced_claims(g: Graph, app: URIRef) -> tuple[int, int]:
     `rg:usedSkill` turns it into precisely that. Everything else is purged: an
     unevidenced, unclaimed, undemanded skill contributes nothing to a CV.
 
+    The two FILTER NOT EXISTS clauses must stay a mirror of `rgs:EvidenceRuleShape`
+    in shapes.ttl: evidence flows through two independent channels (`rg:evidencedBy`
+    = used in real work, `rg:certifies` = attested by credential) and either
+    satisfies the gate. Drop the certifies clause and the projection purges
+    credential-only skills the gate would have passed, which then leaves their
+    Certification with zero `rg:certifies` — a projected graph that fails the very
+    shape this function exists to uphold.
+
     One pass suffices — purging a skill removes no other skill's evidence."""
     orphans = [URIRef(str(r.sk)) for r in g.query("""
         SELECT DISTINCT ?sk WHERE {
             ?sk a rg:Skill .
             { ?sk rg:level ?level } UNION { ?work rg:usedSkill ?sk }
             FILTER NOT EXISTS { ?sk rg:evidencedBy ?evidence }
+            FILTER NOT EXISTS { ?cert rg:certifies ?sk }
         }""", initNs=NS)]
     demanded = set(g.objects(app, RG.demands))
 

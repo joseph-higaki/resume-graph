@@ -5,7 +5,7 @@ must fire from both of its trigger directions."""
 import shutil
 from pathlib import Path
 
-from rdflib import URIRef
+from rdflib import Namespace, URIRef
 
 from pipeline import build, validate
 
@@ -15,6 +15,7 @@ SHAPES = REPO_ROOT / "validation" / "shapes.ttl"
 
 RG = "https://joseph-higaki.github.io/resume-graph/vocab/rg#"
 ID = "https://joseph-higaki.github.io/resume-graph/id/"
+RG_NS = Namespace(RG)
 
 
 def build_and_validate(vault, out_dir):
@@ -35,7 +36,23 @@ def test_real_vault_conforms(tmp_path):
     assert conforms, report
     # spot-check: evidence edges made it into the graph
     assert (URIRef(ID + "AWS%20S3"), URIRef(RG + "evidencedBy"),
-            URIRef(ID + "Billing%20and%20Accounting%20Dashboards")) in g
+            URIRef(ID + "inorbis-invoice-staging")) in g
+
+
+def test_bullet_evidence_reaches_a_position(tmp_path):
+    """Skill -> Bullet -> Position, the path the 2026-07-20 migration bought.
+
+    Evidence pointing at a Bullet is only honest if the Bullet resolves to a role:
+    a Bullet carries no dates or employer of its own, so a dangling one would be an
+    unanchored claim. Asserted over every bullet-backed skill rather than a named
+    pair, which would rot the next time evidence moves."""
+    g, _, _ = build_and_validate(REAL_VAULT, tmp_path)
+    rows = list(g.query("""
+        SELECT ?sk WHERE {
+            ?sk rg:evidencedBy ?b . ?b a rg:Bullet .
+            FILTER NOT EXISTS { ?b rg:bulletOf ?owner . ?owner a rg:Position }
+        }""", initNs={"rg": RG_NS}))
+    assert rows == [], f"bullet evidence not anchored to a Position: {rows}"
 
 
 def test_esco_warning_reported_not_fatal(tmp_path):

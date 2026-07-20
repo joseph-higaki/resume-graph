@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: "Amazon Redshift"
 broader: "[[cloud-aws]]"
 level: aware
-evidencedBy: [ "[[Udacity DE — S3 to Redshift Warehouse]]", "[[Udacity DE — Redshift Table Design]]", "[[Udacity DE — Parallel Ingest to Redshift]]" ]
+evidencedBy: [ "[[Eventstore Warehouse — S3 to Redshift ETL]]", "[[Redshift Performance — Table Design and Sort-Key Optimization]]", "[[Redshift Ingestion — Parallel CSV COPY Optimization]]" ]
 ---
 # Amazon Redshift
 

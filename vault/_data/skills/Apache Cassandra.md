@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: "Apache Cassandra"
 broader: "[[data-eng]]"
 level: aware
-evidencedBy: [ "[[Udacity DE — Cassandra Data Modeling]]" ]
+evidencedBy: [ "[[Songplay Events — Query-First Cassandra Design]]" ]
 ---
 # Apache Cassandra
 

@@ -7,9 +7,9 @@ certifies: [ "[[ITIL]]" ]
 ---
 # ITIL Expert
 
-Issued Jul 2015. https://app.exeed.pro/holder/badge/110993
+Issued Jul 2015. Badge: https://app.exeed.pro/holder/badge/110993
 Supersedes ITIL Intermediate (EXIN, Oct 2014) and ITIL Foundation (Thought Rock,
 Dec 2012) — not modeled separately.
 
-Issue/expiry dates live in prose: the shared context has no mapped key for
-credential dates yet — see upload report (schema gap).
+Deliberately NOT wired to `url:` — same dead EXIN badge host as
+[[Agile Scrum Master EXIN]] (expired TLS cert, then 503). Checked 2026-07-20.

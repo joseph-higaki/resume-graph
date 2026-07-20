@@ -5,7 +5,7 @@ organization: "[[australworks]]"
 heldBy: "[[profile]]"
 startDate: 2009-01-01
 endDate: 2013-06-30
-usedSkill: [ "[[.NET]]", "[[CSharp]]", "[[Microsoft SQL Server]]", "[[SQL]]" ]
+usedSkill: [ "[[.NET]]", "[[CSharp]]", "[[Microsoft SQL Server]]", "[[SQL]]", "[[Java]]", "[[MySQL]]" ]
 ---
 # Co-Founder and Full-Stack Engineer — australworks
 

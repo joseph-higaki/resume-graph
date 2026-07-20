@@ -3,6 +3,6 @@ type: "[[Skill]]"
 prefLabel: "Appian"
 broader: "[[software-eng]]"
 level: aware
-evidencedBy: [ "[[Corporate Action Workflow Management]]" ]
+evidencedBy: [ "[[dm-fs-workflow-automation]]" ]
 ---
 # Appian

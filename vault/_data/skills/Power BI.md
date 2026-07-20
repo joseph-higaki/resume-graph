@@ -3,6 +3,6 @@ type: "[[Skill]]"
 prefLabel: "Power BI"
 broader: "[[data-eng]]"
 level: proficient
-evidencedBy: [ "[[Sales Data Mart MVP]]", "[[Billing and Accounting Dashboards]]" ]
+evidencedBy: [ "[[inorbis-sales-datamart]]", "[[inorbis-dq-reports]]" ]
 ---
 # Power BI

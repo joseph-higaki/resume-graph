@@ -10,9 +10,9 @@ usedSkill: [ "[[Solution Architecture]]", "[[Data Integration]]", "[[Data Analys
 # Co-Founder and CTO — TamboSolar
 
 Start-up spearheading distributed solar generation in Peru; one of the leaders in
-solar installations after 3 years of commercial operations. Technology backbone,
-data platform, and savings calculator — modeled as [[Solar Fleet Data Platform]]
-and [[Solar Savings Calculator]]. Concurrent with Verizon/IBM/Scotiabank roles
-(side venture).
+solar installations after 3 years of commercial operations. Technology backbone: a
+data platform aggregating performance metrics from heterogeneous PV controllers, and
+a savings calculator over tariff and geospatial irradiance data. Concurrent with the
+Verizon/IBM/Scotiabank roles (side venture).
 
 Source: LinkedIn export 2026-07 only (absent from both 2025-09 CVs).

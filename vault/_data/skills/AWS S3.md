@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: "AWS S3"
 broader: "[[cloud-aws]]"
 level: working
-evidencedBy: [ "[[Billing and Accounting Dashboards]]" ]
+evidencedBy: [ "[[inorbis-invoice-staging]]" ]
 ---
 # AWS S3
 

@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: "AWS Lambda"
 broader: "[[cloud-aws]]"
 level: aware
-evidencedBy: [ "[[Personal Investor Data Modernization]]" ]
+evidencedBy: [ "[[dm-fs-enterprise-apis]]" ]
 ---
 # AWS Lambda
 

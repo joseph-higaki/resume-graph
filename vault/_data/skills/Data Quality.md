@@ -3,6 +3,6 @@ type: "[[Skill]]"
 prefLabel: "Data Quality"
 broader: "[[data-eng]]"
 level: proficient
-evidencedBy: [ "[[Personal Investor Data Modernization]]", "[[Billing and Accounting Dashboards]]" ]
+evidencedBy: [ "[[dm-fs-data-discrepancy]]", "[[inorbis-dq-reports]]" ]
 ---
 # Data Quality

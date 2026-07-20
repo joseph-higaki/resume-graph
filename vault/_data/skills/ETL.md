@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: "ETL"
 broader: "[[data-eng]]"
 level: proficient
-evidencedBy: [ "[[Sales Data Mart MVP]]", "[[Data Analytics Consultant — InOrbis Analytics]]" ]
+evidencedBy: [ "[[inorbis-etl-stack]]", "[[Data Analytics Consultant — InOrbis Analytics]]" ]
 ---
 # ETL
 

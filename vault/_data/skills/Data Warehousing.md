@@ -3,6 +3,6 @@ type: "[[Skill]]"
 prefLabel: "Data Warehousing"
 broader: "[[data-eng]]"
 level: working
-evidencedBy: [ "[[Sales Data Mart MVP]]" ]
+evidencedBy: [ "[[inorbis-sales-datamart]]" ]
 ---
 # Data Warehousing

@@ -3,6 +3,6 @@ type: "[[Skill]]"
 prefLabel: "ServiceNow"
 broader: "[[devops]]"
 level: working
-evidencedBy: [ "[[Cloud Portal ServiceNow Integration]]" ]
+evidencedBy: [ "[[ibm-servicenow-integration]]" ]
 ---
 # ServiceNow

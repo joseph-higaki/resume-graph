@@ -3,6 +3,6 @@ type: "[[Skill]]"
 prefLabel: "MySQL"
 broader: "[[data-eng]]"
 level: working
-evidencedBy: [ "[[Billing and Accounting Dashboards]]" ]
+evidencedBy: [ "[[inorbis-invoice-staging]]" ]
 ---
 # MySQL

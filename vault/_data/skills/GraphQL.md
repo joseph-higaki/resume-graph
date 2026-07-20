@@ -3,6 +3,6 @@ type: "[[Skill]]"
 prefLabel: "GraphQL"
 broader: "[[software-eng]]"
 level: aware
-evidencedBy: [ "[[Personal Investor Data Modernization]]" ]
+evidencedBy: [ "[[dm-fs-enterprise-apis]]" ]
 ---
 # GraphQL

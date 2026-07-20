@@ -162,13 +162,20 @@ rgs:RoleFramingUniqueShape a sh:NodeShape ;
         """ ;
     ] .
 
+# Education is dated by its span, not by an issue month: the source (LinkedIn's
+# education section) carries year ranges only, so a required rg:issued would force
+# every note to invent a conferral month. rg:issued stays available for the case
+# where a real one is known — it is required only on Certification, which does
+# print one.
 rgs:EducationShape a sh:NodeShape ;
     sh:targetClass rg:Education ;
     sh:nodeKind sh:IRI ;
     sh:property [ sh:path sdo:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
     sh:property [ sh:path sdo:credentialCategory ; sh:datatype xsd:string ; sh:minCount 1 ] ;
     sh:property [ sh:path sdo:recognizedBy ; sh:class rg:Organization ; sh:minCount 1 ] ;
-    sh:property [ sh:path rg:issued ; sh:datatype xsd:gYearMonth ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:startDate ; sh:datatype xsd:date ; sh:maxCount 1 ] ;
+    sh:property [ sh:path sdo:endDate ; sh:datatype xsd:date ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rg:issued ; sh:datatype xsd:gYearMonth ; sh:maxCount 1 ] ;
     sh:property [ sh:path rg:expires ; sh:datatype xsd:gYearMonth ; sh:maxCount 1 ] ;
     sh:property [ sh:path sdo:url ; sh:nodeKind sh:IRI ; sh:maxCount 1 ] .
 

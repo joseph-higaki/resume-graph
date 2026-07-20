@@ -2,12 +2,13 @@
 type: "[[Skill]]"
 prefLabel: "Master Data Management"
 broader: "[[data-eng]]"
+level: aware
 ---
 # Master Data Management
 
-LinkedIn skill. Unevidenced stub by design: no position or bullet claims MDM work,
-and no certification `rg:certifies` it — the 2026-07-20 decision-3 unlock applied to
-the five skills that a credential actually attests, and this is not one of them.
-Adjacent work exists ([[Data Governance]], [[Data Quality]], canonical CI models and
-controlled vocabularies at Verizon/IBM) but none of it is master-data management, so
-the gap stands rather than being papered over with a neighbouring claim.
+LinkedIn skill. Coursework only — attested by [[Master in Big Data and Analytics]]
+via `rg:certifies`, with no `evidencedBy` because no engagement in the record is
+master-data management. `aware` is exactly that tier: a credential without usage
+evidence. Adjacent professional work exists ([[Data Governance]], [[Data Quality]],
+canonical CI models and controlled vocabularies at Verizon/IBM) but none of it is
+MDM, so it is not borrowed as evidence.

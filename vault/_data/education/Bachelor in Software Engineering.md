@@ -9,6 +9,3 @@ endDate: 2003-12-31
 # Bachelor in Software Engineering
 
 1998-2003.
-
-Dates in prose: no mapped start/end key is wired for Education notes yet —
-see upload report if they should enter the graph.

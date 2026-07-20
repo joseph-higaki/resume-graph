@@ -15,3 +15,9 @@ clickable node in the graph UI.
 
 Fields: `text` (sdo:text), `audience` (rg:audience — one of data-eng | ai-eng |
 delivery | general), `bulletOf` (owning Position/Project), `order` (render order).
+
+2026-07-20 — Bullets became the carrier for client engagements (see [[Project]])
+and a valid [[evidencedBy]] target. A skill evidenced by a Bullet names the single
+accomplishment that proves it, and the path skill → bullet → position recovers the
+employer and dates that the Bullet itself deliberately does not carry: a Bullet has
+no dates of its own, so a claim can never contradict the role it sits in.

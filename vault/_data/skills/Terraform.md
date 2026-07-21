@@ -2,7 +2,7 @@
 type: "[[Skill]]"
 prefLabel: "Terraform"
 broader: "[[devops]]"
-level: working
+level: aware
 evidencedBy: [ "[[RAG Bench Analytics]]", "[[EMR Data Pipeline]]", "[[Data Engineering Zoomcamp Coursework]]" ]
 ---
 # Terraform

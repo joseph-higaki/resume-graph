@@ -481,8 +481,11 @@ WINDOWS.forEach(w=>{
   });
   dtRows.appendChild(el);
 });
-// Level key = legend + filter. Labels are clipped to fit a 5-cell strip in a
-// 216px rail; the title carries the full word plus the bucket's size.
+// Level key = legend + filter. Labels are clipped to fit a 216px rail at the
+// widest case (5 cells, when a projection's demanded stubs put "none" on the
+// scale); the title carries the full word plus the bucket's size. A level-less
+// skill with no "unrated" cell maps to a key nothing can toggle, so it simply
+// stays visible — the absent cell filters nothing rather than hiding silently.
 const LEVEL_LABEL={unrated:"none",aware:"aware",working:"work",proficient:"prof",expert:"expert"};
 const szKey=document.getElementById("sz-key");
 const szEls=[];

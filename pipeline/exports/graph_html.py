@@ -283,15 +283,21 @@ def extract(graph_path: Path) -> dict:
         if owner is not None and text is not None and str(owner) in nodes:
             bullets.setdefault(str(owner), []).append(str(text))
 
+    # "unrated" earns a key cell only when the graph actually holds a level-less
+    # skill — the public vault has none since the 2026-07-21 trim, so the cell
+    # would be dead. It is not dead everywhere: a projection merges the stub
+    # skills an Application rg:demands, which carry no level by design, and there
+    # the filter must name the bucket or turning every level off leaves
+    # unexplained dots on the canvas.
+    unrated = any(n["type"] == "Skill" and not n["attrs"].get("level")
+                  for n in nodes.values())
+
     return {
         "nodes": list(nodes.values()),
         "links": links,
         "bullets": bullets,
         "types": [{"type": t, **m} for t, m in TYPE_META.items()],
-        # "unrated" leads the scale: level-less skills are a real bucket on the
-        # canvas (UNRATED_SIZE), so the key must name it — the viewer's level
-        # filter would otherwise leave unexplained dots when everything is off.
-        "levels": [{"level": "unrated", "size": UNRATED_SIZE}]
+        "levels": ([{"level": "unrated", "size": UNRATED_SIZE}] if unrated else [])
         + [{"level": k, "size": v} for k, v in LEVEL_SIZE.items()],
     }
 

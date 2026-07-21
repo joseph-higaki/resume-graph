@@ -12,6 +12,12 @@ dist/
 # Intermediate exporter staging (build/layers/) — disposable, never published
 build/
 
+# Assembled Pages tree (`make pages`) and the private overlay checkout CI reads
+# it from. Both can hold tailored, employer-named CVs — committing either would
+# put private content in this public repo's history permanently.
+pages/
+.apps/
+
 # Python
 __pycache__/
 *.py[cod]

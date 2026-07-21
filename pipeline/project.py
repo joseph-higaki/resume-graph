@@ -102,6 +102,19 @@ def slug_for(app: URIRef) -> str:
     return "".join(c if c.isalnum() or c in "-_" else "-" for c in tail).strip("-").lower()
 
 
+def dir_for(g: Graph, app: URIRef) -> str:
+    """Output directory name: `rg:publicId` when set, else the readable slug.
+
+    The two names carry different intent. A slug is for the author's disk; a
+    publicId is an unguessable segment for a page served from the public Pages
+    site, where the folder name is the only thing standing between a tailored CV
+    and a search result. Falling back to the slug keeps this repo's zero-config
+    behaviour (and the fixtures) unchanged — an application opts *in* to being
+    publishable by carrying an id."""
+    public = next(g.objects(app, RG.publicId), None)
+    return str(public) if public else slug_for(app)
+
+
 def audiences_of(g: Graph, app: URIRef) -> set[str]:
     return {str(r.a) for r in g.query(
         "SELECT ?a WHERE { ?app rg:audience ?a }",
@@ -311,6 +324,36 @@ def project(graph: Graph, app: URIRef) -> tuple[Graph, dict]:
 # CLI
 # --------------------------------------------------------------------------- #
 
+PRIVATE_META = (
+    '<meta name="robots" content="noindex, nofollow, noarchive">\n'
+    '<meta name="referrer" content="no-referrer">'
+)
+
+
+def _stamp_private(path: Path) -> None:
+    """Stamp the unlisted-page metas into a generated page, in place.
+
+    Every projected page is employer-tailored, so this is unconditional rather
+    than a publish-time flag: a file that starts on disk and later gets copied to
+    a public host must already carry its own refusal.
+
+    `noindex` is the one that does work, and it is why the site's robots.txt must
+    NOT disallow this path — a disallowed URL is never fetched, so the meta is
+    never read, and a URL that leaks from elsewhere gets indexed anyway. Allow
+    the crawl, refuse the index.
+
+    `no-referrer` closes the likelier leak: the URL segment is the only thing
+    keeping the page unlisted, and every outbound click from an unhardened page
+    hands that segment to a third party in the Referer header.
+
+    Neither is access control. Pages serves no custom headers, so the
+    non-HTML siblings (resume.pdf, graph.ttl, resume.json) carry nothing at
+    all — they rely purely on the URL being unguessable."""
+    html = path.read_text(encoding="utf-8")
+    if PRIVATE_META not in html:
+        path.write_text(html.replace("<head>", f"<head>\n{PRIVATE_META}", 1), encoding="utf-8")
+
+
 def _run_exports(dest: Path) -> None:
     """Render resume.pdf + resume.json + graph.html from a projected graph.
 
@@ -319,7 +362,9 @@ def _run_exports(dest: Path) -> None:
 
     graph.html inlines its data, so the projected viewer opens from file:// with
     no server — and it shows the *tailored* subgraph, which is the artifact worth
-    looking at: what the exclusions and audience filter actually removed."""
+    looking at: what the exclusions and audience filter actually removed. It is
+    duplicated to index.html so the directory is directly servable as a URL path;
+    a redirect stub would cost a round trip on the one page a reader lands on."""
     from .exports import graph_html, json_resume, pdf
 
     graph = dest / "graph.ttl"
@@ -327,6 +372,9 @@ def _run_exports(dest: Path) -> None:
     json_resume.write_json(graph, dest / "resume.json")
     (dest / "graph.html").write_text(
         graph_html.render_html(graph_html.extract(graph)), encoding="utf-8")
+    for page in ("graph.html", "resume.html"):
+        _stamp_private(dest / page)
+    shutil.copyfile(dest / "graph.html", dest / "index.html")
 
 def main() -> int:
     parser = argparse.ArgumentParser(
@@ -369,7 +417,7 @@ def main() -> int:
         except ProjectionError as e:
             print(f"error: {e}", file=sys.stderr)
             return 1
-        dest = args.out_dir / slug_for(app)
+        dest = args.out_dir / dir_for(merged, app)
         if args.clean and dest.exists():
             shutil.rmtree(dest)
         dest.mkdir(parents=True, exist_ok=True)

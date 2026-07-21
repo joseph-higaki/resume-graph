@@ -1,0 +1,10 @@
+# Deliberately permissive, /application/ included. Those pages are unlisted, not
+# forbidden: each carries <meta name="robots" content="noindex">, and a crawler
+# told to Disallow a path never fetches it and so never reads that meta — a URL
+# that leaked from anywhere else would then get indexed URL-only. Allow the
+# crawl, refuse the index.
+#
+# Lives under site/public/ because Astro copies that directory verbatim to the
+# site root (M4); until then ci.yml stages this file directly.
+User-agent: *
+Allow: /

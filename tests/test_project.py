@@ -345,9 +345,65 @@ def test_export_writes_the_full_artifact_set(graph_ttl, tmp_path):
     project._run_exports(dest)
 
     assert {p.name for p in dest.iterdir()} == {
-        "graph.ttl", "graph.html", "resume.html", "resume.json", "resume.pdf"}
+        "graph.ttl", "graph.html", "index.html", "resume.html", "resume.json",
+        "resume.pdf"}
     # the viewer is only useful if the *projected* data got inlined, not the
     # template's null placeholder.
     html = (dest / "graph.html").read_text(encoding="utf-8")
     assert "/*__DATA__*/null" not in html
     assert '"nodes":[{' in html
+    # index.html is the viewer itself, so the directory is servable as a URL path
+    assert (dest / "index.html").read_text(encoding="utf-8") == html
+
+
+# --- publishing: opaque directory + unlisted pages -------------------------- #
+
+def test_public_id_names_the_output_directory(graph_ttl, tmp_path, monkeypatch):
+    """The whole privacy story: a publishable application never uses its slug.
+
+    A slug is minted from the note's title, which names the employer — that path
+    on a public host is a leak with or without an index entry. The opaque id is
+    the directory name precisely so the URL carries no information."""
+    pid = "0" * 32
+    ov = overlay(tmp_path, app_note(directives=f'rg:publicId "{pid}" ;'))
+    out = tmp_path / "out"
+    monkeypatch.setattr("sys.argv", ["project.py", "--graph", str(graph_ttl),
+                                     "--extra-graph", str(ov),
+                                     "--application", "app-test",
+                                     "--out-dir", str(out)])
+    assert project.main() == 0
+    assert (out / pid / "graph.ttl").exists()
+    assert not (out / "app-test").exists()
+
+
+def test_without_public_id_the_slug_still_wins(graph_ttl, tmp_path):
+    """Opt-in: no id means local-only, and this repo's fixtures never carry one."""
+    g = merged(graph_ttl, tmp_path, app_note())
+    assert project.dir_for(g, APP) == "app-test"
+
+
+def test_projected_pages_refuse_indexing_and_referrers(graph_ttl, tmp_path):
+    """Both HTML exports carry the metas — a page copied to a public host must
+    already refuse on its own, without depending on where it ended up."""
+    g = merged(graph_ttl, tmp_path, app_note())
+    out, _ = project.project(g, APP)
+    dest = tmp_path / "meta"
+    dest.mkdir()
+    out.serialize(destination=dest / "graph.ttl", format="turtle")
+
+    project._run_exports(dest)
+
+    for page in ("graph.html", "index.html", "resume.html"):
+        html = (dest / page).read_text(encoding="utf-8")
+        assert 'content="noindex, nofollow, noarchive"' in html
+        assert 'name="referrer" content="no-referrer"' in html
+        assert html.count("noindex") == 1        # stamped once, not per rebuild
+
+
+def test_robots_txt_does_not_disallow_the_application_path():
+    """A Disallow would block the crawl and so block the noindex from being read,
+    leaving a leaked URL indexable URL-only. Allow the crawl, refuse the index."""
+    robots = (REPO_ROOT / "site" / "public" / "robots.txt").read_text(encoding="utf-8")
+    directives = [ln for ln in robots.splitlines() if ln and not ln.startswith("#")]
+    assert not any(ln.lower().startswith("disallow") for ln in directives)
+    assert "User-agent: *" in directives

@@ -1,12 +1,20 @@
 # CI — test, build, SHACL-validate, export on every push/PR.
-# Pages deploy below publishes only dist/graph.html (as index.html) — a minimal
-# stand-in until the full Astro site (M5) replaces it via the same mechanism.
+# Pages deploy below publishes dist/ (graph.html doubling as index.html) — a
+# minimal stand-in until the full Astro site (M5) replaces it via the same
+# mechanism — plus the unlisted per-application pages pulled from the private
+# overlay repo. See docs/publishing.md for the threat model and the runbook.
 name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
+  # The private overlay repo fires this after committing a new published/<id>/,
+  # so a tailored CV goes live without a commit here. Payload is ignored: the
+  # deploy always rebuilds pages/ from scratch, which is what keeps it correct.
+  repository_dispatch:
+    types: [applications-updated]
+  workflow_dispatch:        # redeploy by hand from the Actions tab
 
 permissions:
   contents: read
@@ -18,6 +26,11 @@ concurrency:
 jobs:
   build-validate:
     runs-on: ubuntu-latest
+    # Job-level so the two staging steps can gate on `env.APPS_TOKEN != ''`: a
+    # step's own `env:` block is not in scope for that step's own `if`, and
+    # `secrets` is not a context available there at all. Empty on forks and PRs.
+    env:
+      APPS_TOKEN: ${{ secrets.APPS_REPO_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -46,9 +59,29 @@ jobs:
             dist/resume.pdf
             dist/resume.json
 
-      # Pages artifact holds only graph.html (as index.html) — a staging dir
-      # keeps resume.pdf/json/ttl/jsonld off the published site for now.
-      - run: mkdir -p pages && cp dist/graph.html pages/index.html
+      # Unlisted per-application pages. The private repo commits each projected
+      # CV under published/<publicId>/; this checks that tree out with a
+      # read-only fine-grained PAT so `make pages` can fold it in. Two properties
+      # matter:
+      #   - It runs on EVERY deploy, not just on repository_dispatch. Pages
+      #     replaces the whole site each time, so a routine push to main would
+      #     silently delete the application pages if this were conditional.
+      #   - Nothing employer-shaped enters this repo's git history; the content
+      #     lives only in the ephemeral Pages artifact.
+      # No token (forks, PRs, or the secret unset) = a public-only site, which is
+      # a correct build, not a failure.
+      - name: Fetch published applications
+        if: ${{ env.APPS_TOKEN != '' }}
+        uses: actions/checkout@v4
+        with:
+          repository: joseph-higaki/resume-applications
+          token: ${{ env.APPS_TOKEN }}
+          path: .apps
+          persist-credentials: false
+
+      # Same target `make serve` runs locally — the deployable tree has one
+      # definition, so a preview and a deploy cannot drift.
+      - run: make pages APPS_REPO=.apps
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -56,7 +89,10 @@ jobs:
 
   deploy-pages:
     needs: build-validate
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # repository_dispatch always runs on the default branch, so the ref check
+    # still holds; only PRs (which have no secrets and no business deploying)
+    # are excluded.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       pages: write

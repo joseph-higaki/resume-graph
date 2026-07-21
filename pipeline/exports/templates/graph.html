@@ -48,11 +48,18 @@
   .dt-row.on { color:var(--ink); }
   .dt-row.on .dt-mark { border-color:var(--accent); background:var(--accent);
     box-shadow:inset 0 0 0 2px var(--surface); }
-  /* size key: node radius encodes rg:level within the Skill hue */
-  .sz-key { display:flex; align-items:flex-end; gap:10px; padding:2px 0 0; }
-  .sz-key i { display:block; border-radius:50%; background:#199e70; }
-  .sz-cap { display:flex; justify-content:space-between; font-family:var(--mono);
-    font-size:9.5px; color:var(--faint); margin-top:5px; }
+  /* size key: node radius encodes rg:level within the Skill hue. Doubles as a
+     multi-select filter, so each step is a full-width cell — the dots sit on a
+     shared baseline inside a fixed-height box so the rising scale still reads. */
+  .sz-key { display:flex; padding:2px 0 0; }
+  .sz-cell { flex:1 1 0; display:flex; flex-direction:column; align-items:center;
+    gap:5px; padding:2px 0; cursor:pointer; user-select:none; }
+  .sz-dot { height:15px; display:flex; align-items:flex-end; }
+  .sz-dot i { display:block; border-radius:50%; background:#199e70; }
+  .sz-lab { font-family:var(--mono); font-size:9px; color:var(--faint); }
+  .sz-cell:hover .sz-lab { color:var(--ink); }
+  .sz-cell.off .sz-dot i { background:transparent; box-shadow:inset 0 0 0 1px var(--faint); }
+  .sz-cell.off .sz-lab { opacity:.5; text-decoration:line-through; }
   #sb-toggle { display:none; }
 
   /* top bar (sits to the right of the sidebar) */
@@ -138,9 +145,8 @@
     <div id="dt-rows"></div>
   </div>
   <div class="sb-sec">
-    <div class="sb-t"><span>Skill level</span></div>
+    <div class="sb-t"><span>Skill level</span><button id="sz-all">all</button></div>
     <div class="sz-key" id="sz-key"></div>
-    <div class="sz-cap"><span>aware</span><span>expert</span></div>
   </div>
 </nav>
 <div id="bar">
@@ -176,17 +182,28 @@ links.forEach(l => { adj.get(l.s.id).push({ o:l.t, kind:l.kind, dir:"out" });
 const typeColor = Object.fromEntries(DATA.types.map(t => [t.type, t.color]));
 const hidden = new Set();          // hidden by node type (multi-select)
 const dateHidden = new Set();      // hidden by the "last active" window (single-select)
-function vis(n){ return !hidden.has(n.type) && !dateHidden.has(n.id); }
+const hiddenLevels = new Set();    // hidden by rg:level (multi-select, skills only)
+// An unknown/absent level maps to "unrated" — the bucket it is already drawn at,
+// so nothing can slip past every level toggle.
+const LEVEL_KEYS = new Set(DATA.levels.map(l => l.level));
+function levelOf(n){ const v=String(n.attrs.level||"").trim().toLowerCase();
+  return LEVEL_KEYS.has(v) ? v : "unrated"; }
+function lvlHidden(n){ return n.type==="Skill" && hiddenLevels.has(levelOf(n)); }
+function vis(n){ return !hidden.has(n.type) && !dateHidden.has(n.id) && !lvlHidden(n); }
 
 // ---- date window ---------------------------------------------------------
 // `n.last` is a decimal year baked in at build time; `n.ongoing` marks a still-
 // current role, resolved against the VIEWER's clock — so the build output stays
 // byte-stable while "last 6 years" keeps meaning six years from today.
-const WINDOWS = [{label:"all", years:null}, {label:"last 12 years", years:12},
-                 {label:"last 6 years", years:6}];
+// Narrowest first: the recent window is the one a reader reaches for, and "all"
+// reads as the escape hatch at the bottom rather than the head of the list.
+const WINDOWS = [{label:"last 6y", years:6}, {label:"last 12y", years:12},
+                 {label:"all", years:null}];
 const NOW = new Date().getFullYear() + new Date().getMonth()/12;
 let windowYears = null;
 
+// Recomputes every non-type filter. Called by the type and level toggles too:
+// the empty-category cascade below reads vis(), so it depends on all three.
 function applyDateFilter(){
   dateHidden.clear();
   if (windowYears != null){
@@ -198,19 +215,19 @@ function applyDateFilter(){
       // the window, so it drops out rather than floating free of the filter.
       if (at == null || at < cut) dateHidden.add(n.id);
     }
-    // A category hub whose skills all fell outside the window is noise. Run to a
-    // fixed point rather than in one pass: categories nest (cloud-aws broader
-    // cloud), so a parent checked before its child would see a child that is
-    // about to die and survive on it. 9 hubs, so iterating is free.
-    // NOT the deferred cascading multi-select browser — no user selection here.
-    for (let changed=true; changed; ){
-      changed=false;
-      for (const n of DATA.nodes){
-        if (n.type!=="Category" || dateHidden.has(n.id)) continue;
-        // inbound broader = the things filed under this hub (skills or sub-hubs)
-        const alive = adj.get(n.id).some(e => e.kind==="broader" && e.dir==="in" && vis(e.o));
-        if (!alive){ dateHidden.add(n.id); changed=true; }
-      }
+  }
+  // A category hub whose skills all dropped out is noise, whichever filter took
+  // them. Run to a fixed point rather than in one pass: categories nest
+  // (cloud-aws broader cloud), so a parent checked before its child would see a
+  // child that is about to die and survive on it. 9 hubs, so iterating is free.
+  // NOT the deferred cascading multi-select browser — no user selection here.
+  for (let changed=true; changed; ){
+    changed=false;
+    for (const n of DATA.nodes){
+      if (n.type!=="Category" || dateHidden.has(n.id)) continue;
+      // inbound broader = the things filed under this hub (skills or sub-hubs)
+      const alive = adj.get(n.id).some(e => e.kind==="broader" && e.dir==="in" && vis(e.o));
+      if (!alive){ dateHidden.add(n.id); changed=true; }
     }
   }
   if (selected && !vis(selected)) select(null);
@@ -446,7 +463,8 @@ document.getElementById("lg-all").addEventListener("click",()=>{
 // Counts track what is actually on screen, so the window's bite is legible
 // without hunting for it on the canvas.
 function refreshCounts(){
-  const live={}; DATA.nodes.forEach(n=>{ if(!dateHidden.has(n.id)) live[n.type]=(live[n.type]||0)+1; });
+  const live={};
+  DATA.nodes.forEach(n=>{ if(!dateHidden.has(n.id) && !lvlHidden(n)) live[n.type]=(live[n.type]||0)+1; });
   rowEls.forEach((el,t)=>{ el.querySelector(".lg-n").textContent = live[t]||0; });
 }
 
@@ -463,8 +481,28 @@ WINDOWS.forEach(w=>{
   });
   dtRows.appendChild(el);
 });
-document.getElementById("sz-key").innerHTML = DATA.levels
-  .map(l=>`<i title="${l.level}" style="width:${l.size*2}px;height:${l.size*2}px"></i>`).join("");
+// Level key = legend + filter. Labels are clipped to fit a 5-cell strip in a
+// 216px rail; the title carries the full word plus the bucket's size.
+const LEVEL_LABEL={unrated:"none",aware:"aware",working:"work",proficient:"prof",expert:"expert"};
+const szKey=document.getElementById("sz-key");
+const szEls=[];
+const lvlTotal={};
+DATA.nodes.forEach(n=>{ if(n.type==="Skill"){ const k=levelOf(n); lvlTotal[k]=(lvlTotal[k]||0)+1; } });
+DATA.levels.forEach(l=>{
+  const el=document.createElement("div"); el.className="sz-cell";
+  el.title=`${l.level} — ${lvlTotal[l.level]||0} skills`;
+  el.innerHTML=`<span class="sz-dot"><i style="width:${l.size*2}px;height:${l.size*2}px"></i></span>`+
+               `<span class="sz-lab">${LEVEL_LABEL[l.level]||l.level}</span>`;
+  el.addEventListener("click",()=>{
+    if(hiddenLevels.has(l.level)){ hiddenLevels.delete(l.level); el.classList.remove("off"); }
+    else { hiddenLevels.add(l.level); el.classList.add("off"); }
+    applyDateFilter();
+  });
+  szEls.push(el); szKey.appendChild(el);
+});
+document.getElementById("sz-all").addEventListener("click",()=>{
+  hiddenLevels.clear(); szEls.forEach(el=>el.classList.remove("off")); applyDateFilter();
+});
 const sidebar=document.getElementById("sidebar");
 document.getElementById("sb-toggle").addEventListener("click",()=>sidebar.classList.toggle("open"));
 

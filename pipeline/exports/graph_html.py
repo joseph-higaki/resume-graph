@@ -288,7 +288,11 @@ def extract(graph_path: Path) -> dict:
         "links": links,
         "bullets": bullets,
         "types": [{"type": t, **m} for t, m in TYPE_META.items()],
-        "levels": [{"level": k, "size": v} for k, v in LEVEL_SIZE.items()],
+        # "unrated" leads the scale: level-less skills are a real bucket on the
+        # canvas (UNRATED_SIZE), so the key must name it — the viewer's level
+        # filter would otherwise leave unexplained dots when everything is off.
+        "levels": [{"level": "unrated", "size": UNRATED_SIZE}]
+        + [{"level": k, "size": v} for k, v in LEVEL_SIZE.items()],
     }
 
 

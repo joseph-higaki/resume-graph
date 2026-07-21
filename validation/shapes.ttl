@@ -182,11 +182,15 @@ rgs:EducationShape a sh:NodeShape ;
     sh:property [ sh:path rg:expires ; sh:datatype xsd:gYearMonth ; sh:maxCount 1 ] ;
     sh:property [ sh:path sdo:url ; sh:nodeKind sh:IRI ; sh:maxCount 1 ] .
 
+# rg:certifies is optional, deliberately: requiring it would force every
+# credential to mint a skill claim, which is keyword-stuffing pressure baked into
+# the schema — the exact thing the evidence rule exists to prevent. A cert earned
+# but never used professionally is allowed to certify nothing.
 rgs:CertificationShape a sh:NodeShape ;
     sh:targetClass rg:Certification ;
     sh:nodeKind sh:IRI ;
     sh:property [ sh:path sdo:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
-    sh:property [ sh:path rg:certifies ; sh:class rg:Skill ; sh:minCount 1 ] ;
+    sh:property [ sh:path rg:certifies ; sh:class rg:Skill ] ;
     sh:property [ sh:path sdo:recognizedBy ; sh:class rg:Organization ] ;
     sh:property [ sh:path rg:issued ; sh:datatype xsd:gYearMonth ; sh:minCount 1 ; sh:maxCount 1 ] ;
     sh:property [ sh:path rg:expires ; sh:datatype xsd:gYearMonth ; sh:maxCount 1 ] ;

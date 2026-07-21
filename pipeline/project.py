@@ -202,9 +202,8 @@ def _prune_unevidenced_claims(g: Graph, app: URIRef) -> tuple[int, int]:
     in shapes.ttl: evidence flows through two independent channels (`rg:evidencedBy`
     = used in real work, `rg:certifies` = attested by credential) and either
     satisfies the gate. Drop the certifies clause and the projection purges
-    credential-only skills the gate would have passed, which then leaves their
-    Certification with zero `rg:certifies` — a projected graph that fails the very
-    shape this function exists to uphold.
+    credential-only skills the gate would have passed — silently narrowing the CV
+    below what the author can defend.
 
     One pass suffices — purging a skill removes no other skill's evidence."""
     orphans = [URIRef(str(r.sk)) for r in g.query("""

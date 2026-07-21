@@ -312,15 +312,21 @@ def project(graph: Graph, app: URIRef) -> tuple[Graph, dict]:
 # --------------------------------------------------------------------------- #
 
 def _run_exports(dest: Path) -> None:
-    """Render resume.pdf + resume.json from a projected graph.
+    """Render resume.pdf + resume.json + graph.html from a projected graph.
 
     Imported lazily: WeasyPrint pulls in native libraries, and a bare
-    `make project` (the zero-application no-op) has no business paying for them."""
-    from .exports import json_resume, pdf
+    `make project` (the zero-application no-op) has no business paying for them.
+
+    graph.html inlines its data, so the projected viewer opens from file:// with
+    no server — and it shows the *tailored* subgraph, which is the artifact worth
+    looking at: what the exclusions and audience filter actually removed."""
+    from .exports import graph_html, json_resume, pdf
 
     graph = dest / "graph.ttl"
     pdf.write_pdf(graph, dest / "resume.pdf", dest / "resume.html")
     json_resume.write_json(graph, dest / "resume.json")
+    (dest / "graph.html").write_text(
+        graph_html.render_html(graph_html.extract(graph)), encoding="utf-8")
 
 def main() -> int:
     parser = argparse.ArgumentParser(
@@ -336,7 +342,7 @@ def main() -> int:
     parser.add_argument("--clean", action="store_true",
                         help="remove each target directory before writing")
     parser.add_argument("--export", action="store_true",
-                        help="also write resume.pdf + resume.json beside each "
+                        help="also write resume.pdf + resume.json + graph.html beside each "
                              "projected graph")
     args = parser.parse_args()
 

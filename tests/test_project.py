@@ -327,3 +327,27 @@ def test_demanded_stub_never_reaches_the_resume(graph_ttl, tmp_path):
     assert (stub, None, None) in out                      # kept in the graph
     model = build_model(projected)
     assert "Totally-Unheld-Skill" not in {s.label for s in model.skills}
+
+
+# --- the export bundle ------------------------------------------------------ #
+
+def test_export_writes_the_full_artifact_set(graph_ttl, tmp_path):
+    """`--export` owes each projected dir all four artifacts, graph.html included.
+
+    The viewer is the one export that shows what the projection *removed*, so a
+    silently missing graph.html is a real loss and nothing else would catch it."""
+    g = merged(graph_ttl, tmp_path, app_note())
+    out, _ = project.project(g, APP)
+    dest = tmp_path / "bundle"
+    dest.mkdir()
+    out.serialize(destination=dest / "graph.ttl", format="turtle")
+
+    project._run_exports(dest)
+
+    assert {p.name for p in dest.iterdir()} == {
+        "graph.ttl", "graph.html", "resume.html", "resume.json", "resume.pdf"}
+    # the viewer is only useful if the *projected* data got inlined, not the
+    # template's null placeholder.
+    html = (dest / "graph.html").read_text(encoding="utf-8")
+    assert "/*__DATA__*/null" not in html
+    assert '"nodes":[{' in html

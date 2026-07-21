@@ -108,6 +108,131 @@ def test_graph_extract_types_and_edges(graph_ttl):
     # bullets are keyed by owning position/project nodes only
     assert all(owner in ids for owner in data["bullets"])
 
+def test_graph_only_employer_orgs_are_nodes(graph_ttl):
+    """Credentialing-only orgs stay out of the node set (they flooded the
+    Organization cluster); their name still reaches the reader as panel text."""
+    from rdflib import Graph, Namespace
+    from rdflib.namespace import RDF
+
+    g = Graph().parse(graph_ttl, format="turtle")
+    RG = Namespace("https://joseph-higaki.github.io/resume-graph/vocab/rg#")
+    SDO = Namespace("https://schema.org/")
+    employers = set(g.objects(None, RG.organization))
+    issuer_only = {o for o in g.objects(None, SDO.recognizedBy)
+                   if (o, RDF.type, RG.Organization) in g} - employers
+    assert issuer_only, "fixture regression: expected some issuer-only orgs"
+
+    data = graph_html.extract(graph_ttl)
+    org_ids = {n["id"] for n in data["nodes"] if n["type"] == "Organization"}
+    assert org_ids == {str(o) for o in employers}
+    assert not org_ids & {str(o) for o in issuer_only}
+    # the dropped names survive as an `issuer` attr on certs/education
+    issuers = {n["attrs"].get("issuer") for n in data["nodes"]
+               if n["type"] in ("Certification", "Education")}
+    assert issuers - {None}
+
+
+def test_graph_decimal_year_handles_both_date_types():
+    """Certs carry xsd:gYearMonth, positions xsd:date — one parser, both shapes."""
+    assert graph_html._decimal_year("2020-01") == 2020.0
+    assert graph_html._decimal_year("2021-07-01") == pytest.approx(2021.5)
+    assert graph_html._decimal_year("2019") == 2019.0
+    assert graph_html._decimal_year(None) is None
+    assert graph_html._decimal_year("not a date") is None
+
+
+def test_graph_skill_size_stays_below_education(graph_ttl):
+    """Skill radius encodes rg:level, but must never reach Education's size:
+    green↔aqua is the palette's confusable pair and size is what separates them."""
+    education_size = graph_html.TYPE_META["Education"]["size"]
+    assert max(graph_html.LEVEL_SIZE.values()) < education_size
+
+    data = graph_html.extract(graph_ttl)
+    skills = [n for n in data["nodes"] if n["type"] == "Skill"]
+    assert all(n["size"] < education_size for n in skills)
+    by_level = {n["attrs"].get("level"): n["size"] for n in skills}
+    assert by_level["expert"] > by_level["proficient"] > by_level["working"] > by_level["aware"]
+    # unrated skills are stubs — they draw smallest, not at the "aware" step
+    assert by_level.get(None, graph_html.UNRATED_SIZE) < by_level["aware"]
+
+
+def test_graph_skill_date_hops_bulletof_to_the_owner():
+    """Bullets carry no dates, so a bullet-evidenced skill can only be dated via
+    rg:bulletOf → owning Position.
+
+    Synthetic, deliberately: in the real vault this hop is currently redundant,
+    because WS5 rolled every migrated project's `usedSkill` up to its Position,
+    giving each bullet-evidenced skill a direct dated edge as well. That roll-up
+    is an authoring convention with no SHACL shape behind it — the day someone
+    writes a bullet without it, this hop is the only thing keeping the skill from
+    silently reading as never-exercised. Hence a fixture that isolates the path."""
+    from rdflib import Graph, Literal, Namespace, URIRef
+    from rdflib.namespace import RDF, XSD
+
+    RG = Namespace("https://joseph-higaki.github.io/resume-graph/vocab/rg#")
+    SDO = Namespace("https://schema.org/")
+    base = "https://example.org/id/"
+    skill, bullet, pos = (URIRef(base + x) for x in ("s", "b", "p"))
+
+    g = Graph()
+    g.add((skill, RDF.type, RG.Skill))
+    g.add((skill, RG.evidencedBy, bullet))
+    g.add((bullet, RDF.type, RG.Bullet))
+    g.add((bullet, RG.bulletOf, pos))
+    g.add((pos, RDF.type, RG.Position))
+    g.add((pos, SDO.startDate, Literal("2015-03-01", datatype=XSD.date)))
+    g.add((pos, SDO.endDate, Literal("2018-09-01", datatype=XSD.date)))
+
+    dated = {pos: graph_html._activity(g, pos, "Position")}
+    year, ongoing = graph_html._skill_activity(g, skill, dated)
+    assert year == pytest.approx(2018 + 8 / 12)
+    assert ongoing is False
+
+
+def test_graph_unevidenced_skills_stay_undated(graph_ttl):
+    """A stub is unevidenced by construction, so it has no date to report —
+    the gap-analysis signal, not a derivation gap to paper over."""
+    from rdflib import Graph, Namespace
+    from rdflib.namespace import RDF
+
+    g = Graph().parse(graph_ttl, format="turtle")
+    RG = Namespace("https://joseph-higaki.github.io/resume-graph/vocab/rg#")
+
+    data = graph_html.extract(graph_ttl)
+    skills = [n for n in data["nodes"] if n["type"] == "Skill"]
+    assert any("last" in n for n in skills)
+
+    for n in (x for x in skills if "last" not in x):
+        s = next(x for x in g.subjects(RDF.type, RG.Skill) if str(x) == n["id"])
+        assert not list(g.objects(s, RG.evidencedBy))
+        assert not list(g.subjects(RG.usedSkill, s))
+        assert not list(g.subjects(RG.certifies, s))
+
+
+def test_graph_ongoing_role_marks_current_not_undated(graph_ttl):
+    """A Position with no endDate is the current role. It must report `ongoing`
+    so the viewer resolves it against its own clock — a build-time "now" would
+    make the output non-reproducible and stale the window."""
+    data = graph_html.extract(graph_ttl)
+    positions = [n for n in data["nodes"] if n["type"] == "Position"]
+    current = [n for n in positions if n.get("ongoing")]
+    assert len(current) == 1, "expected exactly one open-ended position"
+    assert all(n.get("last") for n in positions), "every position resolves a year"
+
+    # ongoing propagates: employer and the skills evidenced there are current too
+    assert any(n.get("ongoing") for n in data["nodes"] if n["type"] == "Organization")
+    assert any(n.get("ongoing") for n in data["nodes"] if n["type"] == "Skill")
+
+    # The clock is never consulted at build time: every emitted year is one the
+    # graph actually asserts, so two builds of one vault agree forever.
+    asserted = set()
+    for n in data["nodes"]:
+        for key in ("start", "end", "issued"):
+            if (v := n["attrs"].get(key)):
+                asserted.add(graph_html._decimal_year(v))
+    assert max(n["last"] for n in data["nodes"] if "last" in n) <= max(asserted)
+
+
 def test_graph_html_self_contained(graph_ttl):
     data = graph_html.extract(graph_ttl)
     html = graph_html.render_html(data)

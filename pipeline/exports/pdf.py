@@ -23,6 +23,11 @@ from .resume_model import (
     build_model,
 )
 
+# Inlined into a <style> tag rather than passed as WeasyPrint's CSS(filename=…):
+# dist/resume.html is a shipped artifact too, and a stylesheet handed only to the
+# PDF renderer would leave that HTML unstyled. Read at call time, not import.
+_CSS_PATH = Path(__file__).parent / "templates" / "resume.css"
+
 _MONTHS = ("", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
@@ -154,7 +159,7 @@ def render_html(m: ResumeModel) -> str:
 <head>
 <meta charset="utf-8">
 <title>{e(b.name)} — Résumé</title>
-<style>{_CSS}</style>
+<style>{_CSS_PATH.read_text(encoding="utf-8")}</style>
 </head>
 <body>
 <header>
@@ -171,53 +176,6 @@ def render_html(m: ResumeModel) -> str:
 <footer>Generated from the resume-graph knowledge graph · {date.today().isoformat()}</footer>
 </body>
 </html>"""
-
-
-# Print CSS: A4, near-black ink, one deep-blue accent. System sans body; a mono
-# face for the "data" bits (dates, skill tags) echoes the project's identity
-# without turning the résumé into the site's dark theme.
-_CSS = """
-:root { --ink:#111418; --muted:#6b7280; --accent:#184f95; --rule:#d6dae0; --chip:#eef2f7; }
-@page { size: A4; margin: 14mm 15mm; }
-* { box-sizing: border-box; }
-body { font-family: system-ui,-apple-system,"Segoe UI",sans-serif; color: var(--ink);
-       font-size: 10.2pt; line-height: 1.4; margin: 0; }
-a { color: var(--accent); text-decoration: none; }
-h1 { font-size: 22pt; margin: 0; letter-spacing: -0.01em; }
-.label { font-size: 11.5pt; color: var(--accent); font-weight: 600; margin: 2pt 0 0; }
-.contact { font-family: "IBM Plex Mono",ui-monospace,"Cascadia Code",monospace;
-           font-size: 8.6pt; color: var(--muted); margin: 5pt 0 0; }
-.summary { margin: 8pt 0 0; }
-header { border-bottom: 2px solid var(--ink); padding-bottom: 9pt; margin-bottom: 4pt; }
-section { margin-top: 12pt; }
-h2 { font-size: 11pt; text-transform: uppercase; letter-spacing: 0.08em;
-     color: var(--accent); border-bottom: 1px solid var(--rule);
-     padding-bottom: 2pt; margin: 0 0 7pt; }
-.job, .project { margin-bottom: 9pt; break-inside: avoid; }
-.job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8pt; }
-.title { font-weight: 700; }
-.org { flex: 1; color: var(--muted); font-size: 9.4pt; }
-.dates { font-family: "IBM Plex Mono",ui-monospace,monospace; font-size: 8.4pt;
-         color: var(--muted); white-space: nowrap; }
-.period { margin: 3pt 0 0 0; }
-.period-head { display: flex; justify-content: space-between; align-items: baseline; }
-.role { font-weight: 600; font-size: 9.6pt; color: #2a3038; }
-ul.bullets { margin: 3pt 0 0; padding-left: 15pt; }
-ul.bullets li { margin: 1.5pt 0; }
-.desc { margin: 3pt 0 0; }
-.tags { margin-top: 4pt; }
-.tag { display: inline-block; font-family: "IBM Plex Mono",ui-monospace,monospace;
-       font-size: 7.6pt; background: var(--chip); color: #33506f;
-       padding: 1pt 5pt; border-radius: 3px; margin: 0 3pt 3pt 0; }
-.skillrow { display: flex; gap: 8pt; margin: 2.5pt 0; break-inside: avoid; }
-.cat { flex: 0 0 30%; font-weight: 700; color: #2a3038; }
-.vals { flex: 1; }
-ul.plain { margin: 0; padding-left: 15pt; }
-ul.plain li { margin: 2pt 0; }
-.muted { color: var(--muted); }
-footer { margin-top: 14pt; padding-top: 6pt; border-top: 1px solid var(--rule);
-         font-size: 7.6pt; color: var(--muted); text-align: center; }
-"""
 
 
 def write_pdf(graph: Path, out: Path, html_out: Path | None = None) -> Path:

@@ -18,6 +18,7 @@
     "emphasizes": { "@id": "rg:emphasizes", "@type": "@id", "@container": "@set" },
     "excludes": { "@id": "rg:excludes", "@type": "@id", "@container": "@set" },
     "targetRole": "rg:targetRole",
+    "publicId": "rg:publicId",
     "status": "rg:status",
     "summary": "rg:summary",
     "titleOfRecord": "rg:titleOfRecord",

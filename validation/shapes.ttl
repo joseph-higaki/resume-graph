@@ -205,7 +205,13 @@ rgs:ApplicationShape a sh:NodeShape ;
     sh:property [ sh:path rg:demands ; sh:class rg:Skill ] ;
     sh:property [ sh:path rg:audience ;
                   sh:in ( "data-eng" "ai-eng" "delivery" "general" ) ] ;
-    sh:property [ sh:path rg:summary ; sh:datatype xsd:string ; sh:maxCount 1 ] .
+    sh:property [ sh:path rg:summary ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    # The published URL segment. Strict on shape because the value IS the access
+    # control: a typo'd or human-readable id silently publishes a tailored CV at a
+    # guessable address. Optional — an application with none never leaves the disk.
+    sh:property [ sh:path rg:publicId ; sh:datatype xsd:string ; sh:maxCount 1 ;
+                  sh:pattern "^[0-9a-f]{32}$" ;
+                  sh:message "rg:publicId must be 32 lowercase hex characters (uuid4().hex)." ] .
 
 # Category tree integrity: every concept is labeled and placed — broader for
 # children, topConceptOf at the top. Skills (subclass of skos:Concept) pass via

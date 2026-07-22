@@ -201,7 +201,8 @@ def _attrs(g: Graph, s, typ: str) -> dict:
         # artifact (always the 1st), so YYYY-MM is the honest precision.
         last = lit(RG.lastActivity)
         return _drop({"description": lit(SDO.description),
-                      "lastActivity": last[:7] if last else None})
+                      "lastActivity": last[:7] if last else None,
+                      "url": lit(SDO.url)})
     if typ == "Skill":
         cat = g.value(s, SKOS.broader)
         return _drop({"level": lit(RG.level),
@@ -210,7 +211,8 @@ def _attrs(g: Graph, s, typ: str) -> dict:
         return _drop({"definition": lit(SKOS.definition)})
     if typ == "Certification":
         org = g.value(s, SDO.recognizedBy)
-        return _drop({"issuer": _label(g, org) if org else None})
+        return _drop({"issuer": _label(g, org) if org else None,
+                      "url": lit(SDO.url)})
     if typ == "Education":
         org = g.value(s, SDO.recognizedBy)
         return _drop({"credential": lit(SDO.credentialCategory),

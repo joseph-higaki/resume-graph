@@ -95,6 +95,9 @@
   .kv .k { font-family:var(--mono); font-size:10px; letter-spacing:.08em;
     text-transform:uppercase; color:var(--faint); margin-bottom:3px; }
   .kv .v { font-size:13.5px; line-height:1.5; color:var(--ink); }
+  .kv .v a { color:var(--accent); text-decoration:none; font-family:var(--mono);
+    font-size:12.5px; overflow-wrap:anywhere; } /* URLs have no spaces — let them wrap */
+  .kv .v a:hover { text-decoration:underline; }
 
   /* skill level: four rising segments — ordinal scale read at a glance */
   .lvl { display:flex; align-items:flex-end; gap:4px; height:22px; margin-top:2px; }
@@ -380,13 +383,14 @@ canvas.addEventListener("wheel", e=>{
 // ---- side panel ----------------------------------------------------------
 const panel=document.getElementById("panel");
 const AT = { Position:["role","org","start","end","titleOfRecord"],
-  Project:["description","lastActivity"], Skill:["level","category"],
+  Project:["description","lastActivity","url"], Skill:["level","category"],
   Person:["summary","email"], Category:["definition"],
-  Certification:["issuer"], Education:["credential","issuer"] };
+  Certification:["issuer","url"], Education:["credential","issuer"] };
 const KLABEL = { role:"Role", org:"Organization", start:"Start", end:"End",
   titleOfRecord:"Title of record", description:"Description", level:"Level",
   category:"Category", summary:"Summary", email:"Email", definition:"Definition",
-  issuer:"Issuer", credential:"Credential", lastActivity:"Last activity" };
+  issuer:"Issuer", credential:"Credential", lastActivity:"Last activity",
+  url:"Link" };
 const REL = { usedSkill:"Skills used", broader:"Category", evidencedBy:"Evidence",
   certifies:"Certifies", org:"Organization", heldBy:"Held by",
   deliveredDuring:"Delivered during", recognizedBy:"Recognized by" };
@@ -404,6 +408,12 @@ function levelHtml(v){
     <div class="lvl-cap"><span>${LEVELS[0]}</span><b>${esc(LEVELS[i])}</b><span>${LEVELS[3]}</span></div>`;
 }
 
+// Scheme stripped for display (the PDF repo-line treatment: the URL text is the
+// link, it must read clean); new tab so the camera + filter state survive.
+function linkHtml(u){
+  return `<div class="v"><a href="${esc(u)}" target="_blank" rel="noopener">${esc(u.split("//").pop())}</a></div>`;
+}
+
 // 2024.67 → "2024-09". `last` is a decimal year so the window can do arithmetic
 // on it; the panel has to hand it back in a form a reader recognises.
 function fmtYear(y){
@@ -418,7 +428,9 @@ function select(n){
   document.getElementById("p-title").textContent = n.label;
   let h="";
   for(const k of (AT[n.type]||[])){ if(!n.attrs[k]) continue;
-    const val = k==="level" ? levelHtml(n.attrs[k]) : `<div class="v">${esc(n.attrs[k])}</div>`;
+    const val = k==="level" ? levelHtml(n.attrs[k])
+              : k==="url" ? linkHtml(n.attrs[k])
+              : `<div class="v">${esc(n.attrs[k])}</div>`;
     h+=`<div class="kv"><div class="k">${KLABEL[k]||k}</div>${val}</div>`; }
   // A skill's date is derived from its evidence, never asserted on the note —
   // label it so, and say "no evidence" rather than showing a blank for a stub.

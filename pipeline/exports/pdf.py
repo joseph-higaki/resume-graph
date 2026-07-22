@@ -187,8 +187,13 @@ def render_html(m: ResumeModel) -> str:
         + _muted(x.category, _years(x.start, x.end))
         for x in m.education
     ])
+    # Name-is-link, unlike the printed repo URLs: badge URLs are UUID noise on
+    # paper (the publicId rationale below), and the accent colour doubles as a
+    # "verifiable" marker distinguishing linked certs from unlinked ones.
     certs = _list_html([
-        f"<strong>{e(c.name)}</strong>" + (f" — {e(c.issuer)}" if c.issuer else "")
+        (f"<a href='{e(c.url)}'><strong>{e(c.name)}</strong></a>" if c.url
+         else f"<strong>{e(c.name)}</strong>")
+        + (f" — {e(c.issuer)}" if c.issuer else "")
         + _muted(c.issued[:4] if c.issued else None)
         for c in m.certifications
     ])

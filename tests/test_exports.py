@@ -67,6 +67,11 @@ def test_education_sorted_newest_first(model):
 def test_projects_carry_repo_url(model):
     assert any(p.url and "github.com" in p.url for p in model.projects)
 
+def test_certifications_carry_badge_url(model):
+    # sdo:url is optional on certs (some badge hosts are dead — see the vault
+    # notes), so "some but not necessarily all" is the correct assertion.
+    assert any(c.url for c in model.certifications)
+
 
 # --- JSON Resume ----------------------------------------------------------
 
@@ -99,6 +104,7 @@ def test_json_resume_projects_link_and_certs_dated(model):
     doc = json_resume.to_json_resume(model)
     assert any("url" in p for p in doc["projects"])
     assert any("date" in c for c in doc["certificates"])
+    assert any("url" in c for c in doc["certificates"])
 
 
 # --- PDF ------------------------------------------------------------------
@@ -141,6 +147,17 @@ def test_pdf_plain_build_links_site_root(model):
     assert f"<a href='{REPO_URL}'>resume knowledge graph</a>" in html
     assert f"<a href='{SITE_URL}/resume.pdf'>published</a>" in html
     assert "Export of the" in html and "Projection of the" not in html
+
+def test_pdf_linked_certs_render_name_as_anchor(model):
+    """A cert with sdo:url wraps its name in the link (badge URLs are UUID noise
+    on paper); one without renders as plain text, not an empty anchor."""
+    html = pdf.render_html(model)
+    linked = next(c for c in model.certifications if c.url)
+    unlinked = next(c for c in model.certifications if not c.url)
+    assert (f"<a href='{pdf.e(linked.url)}'>"
+            f"<strong>{pdf.e(linked.name)}</strong></a>") in html
+    assert f"<strong>{pdf.e(unlinked.name)}</strong>" in html
+    assert "<a href=''" not in html
 
 def test_pdf_bytes(model, tmp_path):
     from weasyprint import HTML
@@ -185,6 +202,16 @@ def test_graph_only_employer_orgs_are_nodes(graph_ttl):
     issuers = {n["attrs"].get("issuer") for n in data["nodes"]
                if n["type"] in ("Certification", "Education")}
     assert issuers - {None}
+
+
+def test_graph_panel_urls_on_projects_and_certs(graph_ttl):
+    """sdo:url reaches the side panel's attrs bag for both linkable types, and
+    never as an empty string — _drop must have pruned the absent ones."""
+    data = graph_html.extract(graph_ttl)
+    for typ in ("Project", "Certification"):
+        urls = [n["attrs"].get("url") for n in data["nodes"] if n["type"] == typ]
+        assert any(urls), f"no {typ} carries a url attr"
+        assert "" not in urls
 
 
 def test_graph_decimal_year_handles_both_date_types():

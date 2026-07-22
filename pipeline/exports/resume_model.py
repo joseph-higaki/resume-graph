@@ -96,6 +96,7 @@ class Certification:
     name: str
     issuer: str | None
     issued: str | None = None    # raw xsd:gYearMonth string (YYYY-MM)
+    url: str | None = None       # sdo:url — badge/verification page
 
 
 @dataclass
@@ -388,12 +389,14 @@ def build_model(graph_path: Path = DEFAULT_GRAPH) -> ResumeModel:
     # stable Python sort as the tie-break. Sorted here, not in SPARQL: rdflib's
     # gYearMonth comparison is not worth trusting when ISO strings sort correctly.
     certifications = [
-        Certification(name=str(r.name), issuer=_s(r.orgName), issued=_s(r.issued))
+        Certification(name=str(r.name), issuer=_s(r.orgName), issued=_s(r.issued),
+                      url=_s(r.url))
         for r in g.query("""
-            SELECT ?c ?name ?orgName ?issued WHERE {
+            SELECT ?c ?name ?orgName ?issued ?url WHERE {
                 ?c a rg:Certification ; sdo:name ?name .
                 OPTIONAL { ?c sdo:recognizedBy ?org . ?org sdo:name ?orgName }
                 OPTIONAL { ?c rg:issued ?issued }
+                OPTIONAL { ?c sdo:url ?url }
             } ORDER BY ?name""", initNs=ns)
     ]
     certifications.sort(key=lambda c: c.issued or "", reverse=True)

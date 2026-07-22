@@ -83,7 +83,7 @@ def to_json_resume(m: ResumeModel) -> dict:
     ]
 
     certificates = [
-        {"name": c.name, "issuer": c.issuer, "date": c.issued}
+        {"name": c.name, "issuer": c.issuer, "date": c.issued, "url": c.url}
         for c in m.certifications
     ]
 

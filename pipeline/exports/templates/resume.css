@@ -24,6 +24,8 @@ h2 { font-size: 11pt; text-transform: uppercase; letter-spacing: 0.08em;
 .org { flex: 1; color: var(--muted); font-size: 9.4pt; }
 .dates { font-family: "IBM Plex Mono",ui-monospace,monospace; font-size: 8.4pt;
          color: var(--muted); white-space: nowrap; }
+.repo { flex: 1; font-family: "IBM Plex Mono",ui-monospace,monospace; font-size: 8.4pt;
+        overflow-wrap: anywhere; } /* URLs have no spaces; let long ones wrap, not overflow */
 .period { margin: 3pt 0 0 0; }
 .period-head { display: flex; justify-content: space-between; align-items: baseline; }
 .role { font-weight: 600; font-size: 9.6pt; color: #2a3038; }

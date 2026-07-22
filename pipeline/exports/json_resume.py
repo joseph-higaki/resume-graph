@@ -60,6 +60,7 @@ def to_json_resume(m: ResumeModel) -> dict:
             "name": p.name,
             "description": p.description,
             "startDate": p.start,
+            "url": p.url,
             "highlights": [b.text for b in p.bullets],
             "keywords": p.skills,
         }
@@ -75,12 +76,14 @@ def to_json_resume(m: ResumeModel) -> dict:
     ]
 
     education = [
-        {"institution": e.issuer, "area": e.name, "studyType": e.category}
+        {"institution": e.issuer, "area": e.name, "studyType": e.category,
+         "startDate": e.start, "endDate": e.end}
         for e in m.education
     ]
 
     certificates = [
-        {"name": c.name, "issuer": c.issuer} for c in m.certifications
+        {"name": c.name, "issuer": c.issuer, "date": c.issued}
+        for c in m.certifications
     ]
 
     doc = {

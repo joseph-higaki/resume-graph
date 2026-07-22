@@ -60,6 +60,7 @@ class Project:
     description: str | None
     start: str | None
     during_iri: str | None       # owning Position IRI, if any
+    url: str | None = None       # sdo:url — the repo link
     bullets: list[Bullet] = field(default_factory=list)
     skills: list[str] = field(default_factory=list)
     emphasized: bool = False     # rg:emphasizes on a projection's Application
@@ -88,6 +89,7 @@ class Category:
 class Certification:
     name: str
     issuer: str | None
+    issued: str | None = None    # raw xsd:gYearMonth string (YYYY-MM)
 
 
 @dataclass
@@ -95,6 +97,8 @@ class Education:
     name: str
     category: str | None
     issuer: str | None
+    start: str | None = None
+    end: str | None = None
 
 
 @dataclass
@@ -115,6 +119,7 @@ class ResumeModel:
     categories: list[Category]
     certifications: list[Certification]
     education: list[Education]
+    audiences: set[str] = field(default_factory=set)  # projection's rg:audience; empty on a plain build
 
     # --- derived views -----------------------------------------------------
 
@@ -196,6 +201,16 @@ def _emphasized_iris(g: Graph) -> set[str]:
     position gets emphasized by keeping it and excluding its neighbours."""
     return {str(r.n) for r in g.query(
         "SELECT ?n WHERE { ?app a rg:Application ; rg:emphasizes ?n }",
+        initNs={"rg": RG})}
+
+
+def _declared_audiences(g: Graph) -> set[str]:
+    """The projection Application's `rg:audience` values — empty on a plain build.
+
+    Scoped to the Application: Bullets and RoleFramings carry `rg:audience` too,
+    and those must not leak into what the exports treat as declared intent."""
+    return {str(r.a) for r in g.query(
+        "SELECT ?a WHERE { ?app a rg:Application ; rg:audience ?a }",
         initNs={"rg": RG})}
 
 
@@ -281,15 +296,16 @@ def build_model(graph_path: Path = DEFAULT_GRAPH) -> ResumeModel:
     # projects
     projects: list[Project] = []
     for r in g.query("""
-        SELECT ?proj ?name ?desc ?start ?during WHERE {
+        SELECT ?proj ?name ?desc ?start ?during ?url WHERE {
             ?proj a rg:Project ; sdo:name ?name .
             OPTIONAL { ?proj sdo:description ?desc }
             OPTIONAL { ?proj sdo:startDate ?start }
             OPTIONAL { ?proj rg:deliveredDuring ?during }
+            OPTIONAL { ?proj sdo:url ?url }
         }""", initNs=ns):
         projects.append(Project(
             iri=str(r.proj), name=str(r.name), description=_s(r.desc),
-            start=_s(r.start), during_iri=_s(r.during),
+            start=_s(r.start), during_iri=_s(r.during), url=_s(r.url),
             bullets=_bullets_for(g, r.proj), skills=_skills_for(g, r.proj),
             emphasized=str(r.proj) in emphasized,
         ))
@@ -338,31 +354,40 @@ def build_model(graph_path: Path = DEFAULT_GRAPH) -> ResumeModel:
             emphasized=str(r.sk) in emphasized,
         ))
 
-    # certifications
+    # certifications — newest issued first; SPARQL's ORDER BY ?name survives the
+    # stable Python sort as the tie-break. Sorted here, not in SPARQL: rdflib's
+    # gYearMonth comparison is not worth trusting when ISO strings sort correctly.
     certifications = [
-        Certification(name=str(r.name), issuer=_s(r.orgName))
+        Certification(name=str(r.name), issuer=_s(r.orgName), issued=_s(r.issued))
         for r in g.query("""
-            SELECT ?c ?name ?orgName WHERE {
+            SELECT ?c ?name ?orgName ?issued WHERE {
                 ?c a rg:Certification ; sdo:name ?name .
                 OPTIONAL { ?c sdo:recognizedBy ?org . ?org sdo:name ?orgName }
+                OPTIONAL { ?c rg:issued ?issued }
             } ORDER BY ?name""", initNs=ns)
     ]
+    certifications.sort(key=lambda c: c.issued or "", reverse=True)
 
-    # education
+    # education — newest first by end date (open-ended falls back to start)
     education = [
-        Education(name=str(r.name), category=_s(r.cat), issuer=_s(r.orgName))
+        Education(name=str(r.name), category=_s(r.cat), issuer=_s(r.orgName),
+                  start=_s(r.start), end=_s(r.end))
         for r in g.query("""
-            SELECT ?e ?name ?cat ?orgName WHERE {
+            SELECT ?e ?name ?cat ?orgName ?start ?end WHERE {
                 ?e a rg:Education ; sdo:name ?name .
                 OPTIONAL { ?e sdo:credentialCategory ?cat }
                 OPTIONAL { ?e sdo:recognizedBy ?org . ?org sdo:name ?orgName }
+                OPTIONAL { ?e sdo:startDate ?start }
+                OPTIONAL { ?e sdo:endDate ?end }
             } ORDER BY ?name""", initNs=ns)
     ]
+    education.sort(key=lambda x: x.end or x.start or "", reverse=True)
 
     return ResumeModel(
         basics=basics, positions=positions, projects=projects,
         skills=skills, categories=categories,
         certifications=certifications, education=education,
+        audiences=_declared_audiences(g),
     )
 
 

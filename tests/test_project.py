@@ -329,6 +329,25 @@ def test_demanded_stub_never_reaches_the_resume(graph_ttl, tmp_path):
     assert "Totally-Unheld-Skill" not in {s.label for s in model.skills}
 
 
+def test_engineering_audience_reaches_the_rendered_resume(graph_ttl, tmp_path):
+    """End-to-end: rg:audience survives projection, flows through the model, and
+    flips the PDF layout — Selected Repositories retitled and hoisted above
+    Experience. This is the one path that exercises the surviving-Application
+    contract for audiences (emphasis already has its own)."""
+    from pipeline.exports import pdf
+    from pipeline.exports.resume_model import build_model
+
+    g = merged(graph_ttl, tmp_path, app_note(audiences='"data-eng"'))
+    out, _ = project.project(g, APP)
+    projected = tmp_path / "eng.ttl"
+    out.serialize(destination=projected, format="turtle")
+
+    model = build_model(projected)
+    assert model.audiences == {"data-eng"}
+    html = pdf.render_html(model)
+    assert html.index("<h2>Selected Repositories</h2>") < html.index("<h2>Experience</h2>")
+
+
 # --- the export bundle ------------------------------------------------------ #
 
 def test_export_writes_the_full_artifact_set(graph_ttl, tmp_path):

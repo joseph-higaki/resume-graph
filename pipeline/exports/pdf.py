@@ -31,6 +31,14 @@ _CSS_PATH = Path(__file__).parent / "templates" / "resume.css"
 _MONTHS = ("", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
+# Audiences whose tailored resume gets the engineering framing: the projects
+# section is titled "Selected Repositories" and leads (after the summary, before
+# Experience) — a hiring engineer weighs shipped code above employment history.
+# Export-layer policy on purpose, like the claimed-skill filter in resume_model:
+# the graph records *what* an application targets, the export decides how that
+# renders. A plain build has no Application, so the default layout is untouched.
+ENGINEERING_AUDIENCES = frozenset({"data-eng", "ai-eng"})
+
 
 def _month(iso: str | None) -> str:
     """'2025-10-01' → 'Oct 2025'; None → 'Present'."""
@@ -105,10 +113,15 @@ def _projects_html(m: ResumeModel) -> str:
     blocks = []
     for p in m.projects:
         tags = "".join(f"<span class='tag'>{e(s)}</span>" for s in p.skills)
+        # Scheme stripped for display (same treatment as the contact line): on
+        # paper the URL text is the link, so it must read clean.
+        repo = (f"<span class='repo'><a href='{e(p.url)}'>{e(p.url.split('//')[-1])}</a></span>"
+                if p.url else "")
         blocks.append(
             "<div class='project'>"
             "<div class='job-head'>"
             f"<span class='title'>{e(p.name)}</span>"
+            + repo +
             f"<span class='dates'>{_month(p.start)}</span>"
             "</div>"
             + (f"<p class='desc'>{e(p.description)}</p>" if p.description else "")
@@ -134,31 +147,52 @@ def _list_html(items: list[str]) -> str:
     return "<ul class='plain'>" + "".join(f"<li>{i}</li>" for i in items) + "</ul>"
 
 
+def _muted(*parts: str | None) -> str:
+    """Join the non-empty parts into one muted parenthetical, e.g. (master degree, 2020–2021)."""
+    vals = ", ".join(e(p) for p in parts if p)
+    return f" <span class='muted'>({vals})</span>" if vals else ""
+
+
+def _years(start: str | None, end: str | None) -> str | None:
+    a, b = (start or "")[:4], (end or "")[:4]
+    if a and b:
+        return a if a == b else f"{a}–{b}"
+    return a or b or None
+
+
 def render_html(m: ResumeModel) -> str:
     b = m.basics
     contact = [e(b.email)] if b.email else []
     contact += [f"<a href='{e(u)}'>{e(u.split('//')[-1])}</a>" for u in b.profiles]
     contact_line = " &nbsp;·&nbsp; ".join(contact)
 
+    # Newest-first order comes from the model; the years make that order legible.
     education = _list_html([
         f"<strong>{e(x.name)}</strong>"
         + (f" — {e(x.issuer)}" if x.issuer else "")
-        + (f" <span class='muted'>({e(x.category)})</span>" if x.category else "")
+        + _muted(x.category, _years(x.start, x.end))
         for x in m.education
     ])
     certs = _list_html([
         f"<strong>{e(c.name)}</strong>" + (f" — {e(c.issuer)}" if c.issuer else "")
+        + _muted(c.issued[:4] if c.issued else None)
         for c in m.certifications
     ])
 
     def section(title: str, body: str) -> str:
         return f"<section><h2>{title}</h2>{body}</section>" if body else ""
 
+    engineering = bool(m.audiences & ENGINEERING_AUDIENCES)
+    experience = section("Experience", _experience_html(m))
+    projects = section("Selected Repositories" if engineering else "Selected Projects",
+                       _projects_html(m))
+    lead = projects + experience if engineering else experience + projects
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>{e(b.name)} — Résumé</title>
+<title>{e(b.name)} — Resume</title>
 <style>{_CSS_PATH.read_text(encoding="utf-8")}</style>
 </head>
 <body>
@@ -168,8 +202,7 @@ def render_html(m: ResumeModel) -> str:
   <p class='contact'>{contact_line}</p>
   {f"<p class='summary'>{e(b.summary)}</p>" if b.summary else ""}
 </header>
-{section("Experience", _experience_html(m))}
-{section("Selected Projects", _projects_html(m))}
+{lead}
 {section("Skills", _skills_html(m))}
 {section("Education", education)}
 {section("Certifications", certs)}

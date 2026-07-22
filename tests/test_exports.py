@@ -55,6 +55,18 @@ def test_skills_cluster_has_aws(model):
     aws = next(sc for sc in model.skills_by_category() if sc.label == "AWS")
     assert aws.skills  # non-empty cloud cluster
 
+def test_certifications_sorted_newest_first(model):
+    issued = [c.issued for c in model.certifications if c.issued]
+    assert len(issued) > 3, "dates stopped flowing from rg:issued"
+    assert issued == sorted(issued, reverse=True)
+
+def test_education_sorted_newest_first(model):
+    keys = [x.end or x.start for x in model.education if x.end or x.start]
+    assert keys and keys == sorted(keys, reverse=True)
+
+def test_projects_carry_repo_url(model):
+    assert any(p.url and "github.com" in p.url for p in model.projects)
+
 
 # --- JSON Resume ----------------------------------------------------------
 
@@ -78,6 +90,11 @@ def test_json_resume_profiles_networked(model):
     nets = {p["network"] for p in doc["basics"].get("profiles", [])}
     assert "GitHub" in nets or "LinkedIn" in nets
 
+def test_json_resume_projects_link_and_certs_dated(model):
+    doc = json_resume.to_json_resume(model)
+    assert any("url" in p for p in doc["projects"])
+    assert any("date" in c for c in doc["certificates"])
+
 
 # --- PDF ------------------------------------------------------------------
 
@@ -86,6 +103,28 @@ def test_pdf_html_renders_sections(model):
     assert model.basics.name in html
     for section in ("Experience", "Skills", "Education"):
         assert section in html
+
+def test_pdf_default_layout_experience_first(model):
+    # A plain build carries no Application → no audiences → default framing.
+    assert model.audiences == set()
+    html = pdf.render_html(model)
+    assert html.index("<h2>Experience</h2>") < html.index("<h2>Selected Projects</h2>")
+    assert "Selected Repositories" not in html
+
+def test_pdf_engineering_layout_repositories_lead(model):
+    """An engineering-audience projection retitles the projects section and
+    hoists it above Experience — the repo links are the evidence that matters."""
+    import dataclasses
+    eng = dataclasses.replace(model, audiences={"data-eng"})
+    html = pdf.render_html(eng)
+    assert "Selected Projects" not in html
+    assert html.index("<h2>Selected Repositories</h2>") < html.index("<h2>Experience</h2>")
+    assert "class='repo'" in html  # repo links render in the head line
+
+def test_pdf_delivery_audience_keeps_default_layout(model):
+    import dataclasses
+    html = pdf.render_html(dataclasses.replace(model, audiences={"delivery"}))
+    assert html.index("<h2>Experience</h2>") < html.index("<h2>Selected Projects</h2>")
 
 def test_pdf_bytes(model, tmp_path):
     from weasyprint import HTML

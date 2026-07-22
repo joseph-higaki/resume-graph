@@ -401,6 +401,51 @@ def test_without_public_id_the_slug_still_wins(graph_ttl, tmp_path):
     assert project.dir_for(g, APP) == "app-test"
 
 
+def test_public_id_reaches_the_rendered_resume(graph_ttl, tmp_path):
+    """publicId flows graph → model → the CV's own links: header 'Graph Resume'
+    → the application page, footer 'published' → its canonical resume.pdf, JSON
+    basics.url → the same page. The point is that a *forwarded artifact* still
+    leads back to the live graph."""
+    from pipeline.exports import json_resume, pdf
+    from pipeline.exports.resume_model import SITE_URL, build_model
+
+    pid = "0" * 32
+    g = merged(graph_ttl, tmp_path, app_note(directives=f'rg:publicId "{pid}" ;'))
+    out, _ = project.project(g, APP)
+    projected = tmp_path / "pub.ttl"
+    out.serialize(destination=projected, format="turtle")
+
+    model = build_model(projected)
+    assert model.projected is True and model.public_id == pid
+    html = pdf.render_html(model)
+    page = f"{SITE_URL}/application/{pid}/"
+    assert f"<a href='{page}'>Graph Resume</a>" in html
+    assert f"<a href='{page}resume.pdf'>published</a>" in html
+    assert "Projection of the" in html
+    assert json_resume.to_json_resume(model)["basics"]["url"] == page
+
+
+def test_unpublished_projection_prints_no_url(graph_ttl, tmp_path):
+    """No publicId = structurally unpublishable, so the CV must not print a link:
+    a slug URL would 404 on the site *and* name the employer on paper. The
+    provenance line still says what the document is — just without a 'published'
+    claim it cannot back. JSON gets no basics.url either (pruned, not null)."""
+    from pipeline.exports import json_resume, pdf
+    from pipeline.exports.resume_model import build_model
+
+    g = merged(graph_ttl, tmp_path, app_note())
+    out, _ = project.project(g, APP)
+    projected = tmp_path / "local.ttl"
+    out.serialize(destination=projected, format="turtle")
+
+    model = build_model(projected)
+    html = pdf.render_html(model)
+    assert ">Graph Resume</a>" not in html
+    assert ">published</a>" not in html and "/application/" not in html
+    assert "Projection of the" in html
+    assert "url" not in json_resume.to_json_resume(model)["basics"]
+
+
 def test_projected_pages_refuse_indexing_and_referrers(graph_ttl, tmp_path):
     """Both HTML exports carry the metas — a page copied to a public host must
     already refuse on its own, without depending on where it ended up."""

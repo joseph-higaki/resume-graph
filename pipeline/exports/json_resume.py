@@ -38,6 +38,7 @@ def to_json_resume(m: ResumeModel) -> dict:
         "name": m.basics.name,
         "label": m.basics.label,
         "email": m.basics.email,
+        "url": m.page_url(),   # the CV's own published page; None (pruned) when unpublished
         "summary": m.basics.summary,
         "profiles": [
             {"network": _network(u), "url": u} for u in m.basics.profiles

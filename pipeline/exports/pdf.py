@@ -17,6 +17,7 @@ from pathlib import Path
 
 from .resume_model import (
     REPO_ROOT,
+    REPO_URL,
     ExperienceGroup,
     Position,
     ResumeModel,
@@ -38,6 +39,18 @@ _MONTHS = ("", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
 # the graph records *what* an application targets, the export decides how that
 # renders. A plain build has no Application, so the default layout is untouched.
 ENGINEERING_AUDIENCES = frozenset({"data-eng", "ai-eng"})
+
+def _footer_html(m: ResumeModel) -> str:
+    """Provenance line: what this document is a projection of, and where the
+    canonical copy lives. The date is the build date — for anything that reaches
+    the site that IS the publish date, because publishing promotes a fresh build."""
+    graph_link = f"<a href='{REPO_URL}'>resume knowledge graph</a>"
+    noun = "Projection" if m.projected else "Export"
+    page = m.page_url()
+    if page:
+        return (f"{noun} of the {graph_link}, "
+                f"<a href='{e(page)}resume.pdf'>published</a> on {date.today().isoformat()}")
+    return f"{noun} of the {graph_link} · {date.today().isoformat()}"
 
 
 def _month(iso: str | None) -> str:
@@ -189,6 +202,13 @@ def render_html(m: ResumeModel) -> str:
                        _projects_html(m))
     lead = projects + experience if engineering else experience + projects
 
+    # Label text, not the URL, on purpose (unlike the contact line): a publicId
+    # URL is 32 hex characters of noise on paper. Sits between the job title and
+    # the contact line — the first actionable thing a reader meets.
+    page = m.page_url()
+    graph_line = (f"<p class='cv-link'><a href='{e(page)}'>Graph Resume</a></p>"
+                  if page else "")
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,6 +220,7 @@ def render_html(m: ResumeModel) -> str:
 <header>
   <h1>{e(b.name)}</h1>
   {f"<p class='label'>{e(b.label)}</p>" if b.label else ""}
+  {graph_line}
   <p class='contact'>{contact_line}</p>
   {f"<p class='summary'>{e(b.summary)}</p>" if b.summary else ""}
 </header>
@@ -207,7 +228,7 @@ def render_html(m: ResumeModel) -> str:
 {section("Skills", _skills_html(m))}
 {section("Education", education)}
 {section("Certifications", certs)}
-<footer>Generated from the resume-graph knowledge graph · {date.today().isoformat()}</footer>
+<footer>{_footer_html(m)}</footer>
 </body>
 </html>"""
 

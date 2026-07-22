@@ -13,7 +13,7 @@ import pytest
 
 from pipeline import build
 from pipeline.exports import graph_html, json_resume, pdf
-from pipeline.exports.resume_model import build_model
+from pipeline.exports.resume_model import REPO_URL, SITE_URL, build_model
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 REAL_VAULT = REPO_ROOT / "vault"
@@ -90,6 +90,11 @@ def test_json_resume_profiles_networked(model):
     nets = {p["network"] for p in doc["basics"].get("profiles", [])}
     assert "GitHub" in nets or "LinkedIn" in nets
 
+def test_json_resume_url_is_the_published_page(model):
+    # Same rule as the PDF header, machine-readable channel: one page_url().
+    doc = json_resume.to_json_resume(model)
+    assert doc["basics"]["url"] == f"{SITE_URL}/"
+
 def test_json_resume_projects_link_and_certs_dated(model):
     doc = json_resume.to_json_resume(model)
     assert any("url" in p for p in doc["projects"])
@@ -125,6 +130,17 @@ def test_pdf_delivery_audience_keeps_default_layout(model):
     import dataclasses
     html = pdf.render_html(dataclasses.replace(model, audiences={"delivery"}))
     assert html.index("<h2>Experience</h2>") < html.index("<h2>Selected Projects</h2>")
+
+def test_pdf_plain_build_links_site_root(model):
+    """No Application in the graph → the CV points at the public site, not at an
+    application page: header 'Graph Resume' → site root, footer 'published' →
+    the root resume.pdf, provenance → the repo."""
+    assert model.projected is False and model.public_id is None
+    html = pdf.render_html(model)
+    assert f"<a href='{SITE_URL}/'>Graph Resume</a>" in html
+    assert f"<a href='{REPO_URL}'>resume knowledge graph</a>" in html
+    assert f"<a href='{SITE_URL}/resume.pdf'>published</a>" in html
+    assert "Export of the" in html and "Projection of the" not in html
 
 def test_pdf_bytes(model, tmp_path):
     from weasyprint import HTML

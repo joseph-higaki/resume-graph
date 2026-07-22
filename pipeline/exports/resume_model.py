@@ -32,6 +32,12 @@ DEFAULT_GRAPH = REPO_ROOT / "dist" / "graph.ttl"
 # Level → sort weight (expert first) and a 0–1 strength for later UI use.
 LEVEL_ORDER = {"expert": 4, "proficient": 3, "working": 2, "aware": 1}
 
+# Where a rendered CV points back to. Policy lives here, not per-export, so the
+# PDF header and JSON basics.url can never disagree: the graph records the
+# publicId, this layer decides the URL shape.
+SITE_URL = "https://joseph-higaki.github.io/resume-graph"
+REPO_URL = "https://github.com/joseph-higaki/resume-graph"
+
 
 @dataclass
 class Bullet:
@@ -120,8 +126,20 @@ class ResumeModel:
     certifications: list[Certification]
     education: list[Education]
     audiences: set[str] = field(default_factory=set)  # projection's rg:audience; empty on a plain build
+    projected: bool = False      # an Application node survived into this graph
+    public_id: str | None = None  # its rg:publicId — present only when publishable
 
     # --- derived views -----------------------------------------------------
+
+    def page_url(self) -> str | None:
+        """This CV's own published page, or None when no such URL exists.
+
+        A projection without a publicId is structurally unpublishable (the
+        publishing runbook's rule), so exports must not print a link — a slug
+        URL would 404 *and* name the employer."""
+        if not self.projected:
+            return f"{SITE_URL}/"
+        return f"{SITE_URL}/application/{self.public_id}/" if self.public_id else None
 
     def experience_groups(self) -> list["ExperienceGroup"]:
         """Fold positions into title-of-record buckets, newest first.
@@ -202,6 +220,18 @@ def _emphasized_iris(g: Graph) -> set[str]:
     return {str(r.n) for r in g.query(
         "SELECT ?n WHERE { ?app a rg:Application ; rg:emphasizes ?n }",
         initNs={"rg": RG})}
+
+
+def _application_meta(g: Graph) -> tuple[bool, str | None]:
+    """(Application present?, its rg:publicId) — (False, None) on a plain build.
+
+    The id is what lets a rendered CV link its own canonical URL; a projection
+    without one is local-only by the publishing contract, so None means "no
+    published URL exists", not "unknown"."""
+    row = next(iter(g.query(
+        "SELECT ?app ?pid WHERE { ?app a rg:Application . "
+        "OPTIONAL { ?app rg:publicId ?pid } }", initNs={"rg": RG})), None)
+    return (False, None) if row is None else (True, _s(row.pid))
 
 
 def _declared_audiences(g: Graph) -> set[str]:
@@ -383,11 +413,13 @@ def build_model(graph_path: Path = DEFAULT_GRAPH) -> ResumeModel:
     ]
     education.sort(key=lambda x: x.end or x.start or "", reverse=True)
 
+    projected, public_id = _application_meta(g)
     return ResumeModel(
         basics=basics, positions=positions, projects=projects,
         skills=skills, categories=categories,
         certifications=certifications, education=education,
         audiences=_declared_audiences(g),
+        projected=projected, public_id=public_id,
     )
 
 

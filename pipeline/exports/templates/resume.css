@@ -10,6 +10,8 @@ body { font-family: system-ui,-apple-system,"Segoe UI",sans-serif; color: var(--
 a { color: var(--accent); text-decoration: none; }
 h1 { font-size: 22pt; margin: 0; letter-spacing: -0.01em; }
 .label { font-size: 11.5pt; color: var(--accent); font-weight: 600; margin: 2pt 0 0; }
+.cv-link { font-family: "IBM Plex Mono",ui-monospace,"Cascadia Code",monospace;
+           font-size: 8.6pt; margin: 4pt 0 0; } /* accent via `a`; the one live affordance in the header */
 .contact { font-family: "IBM Plex Mono",ui-monospace,"Cascadia Code",monospace;
            font-size: 8.6pt; color: var(--muted); margin: 5pt 0 0; }
 .summary { margin: 8pt 0 0; }

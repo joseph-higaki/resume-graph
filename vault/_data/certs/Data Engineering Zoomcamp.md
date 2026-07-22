@@ -9,5 +9,5 @@ certifies: [ "[[Apache Airflow]]", "[[Docker]]", "[[Python]]", "[[dbt]]", "[[Dat
 # Data Engineering Zoomcamp
 
 Issued Apr 2025. Credential ID a34d7e — LinkedIn truncates it; the certificate
-URL carries the full hash. The PDF names the holder and '19 April 2025'. LinkedIn tags include 'Docks' (sic — read as
+URL carries the full hash. LinkedIn tags include 'Docks' (sic — read as
 Docker), 'vs code', and duplicate Airflow/DBT/GCS entries — deduplicated here.

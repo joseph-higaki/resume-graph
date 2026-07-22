@@ -6,4 +6,4 @@ level: aware
 ---
 # Big Data Analytics
 
-Certified by [[Big Data Foundations Level 1]]; stub pending interview.
+Certified by [[Big Data Foundations Level 1]].

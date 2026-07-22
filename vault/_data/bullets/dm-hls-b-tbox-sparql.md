@@ -7,5 +7,4 @@ order: 2
 ---
 # dm-hls-b-tbox-sparql
 
-Hands-on SPARQL — this is what promotes the SPARQL skill from self-directed-project
-evidence to professional evidence.
+Hands-on SPARQL — the professional-evidence anchor for [[SPARQL]].

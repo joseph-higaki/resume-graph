@@ -15,4 +15,4 @@ data platform aggregating performance metrics from heterogeneous PV controllers,
 a savings calculator over tariff and geospatial irradiance data. Concurrent with the
 Verizon/IBM/Scotiabank roles (side venture).
 
-Source: LinkedIn export 2026-07 only (absent from both 2025-09 CVs).
+Source: LinkedIn export 2026-07.

@@ -7,6 +7,5 @@ order: 3
 ---
 # inorbis-invoice-staging
 
-Split out of the deleted "Billing and Accounting Dashboards" project note so
-[[AWS S3]] and [[MySQL]] keep a named, hands-on evidence target — the sibling
-[[inorbis-etl-stack]] lists both among a stack of nine and proves nothing specific.
+Split out of the deleted "Billing and Accounting Dashboards" project note; the
+named, hands-on evidence target for [[AWS S3]] and [[MySQL]].

@@ -6,5 +6,4 @@ level: aware
 ---
 # Azure Synapse Analytics
 
-Claimed at `aware` on the credential channel only — [[Microsoft Certified Azure Data Fundamentals]]
-certifies it, no shipped work does.
+Certified by [[Microsoft Certified Azure Data Fundamentals]]; no project evidence yet.

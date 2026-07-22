@@ -14,5 +14,4 @@ Verizon Cloud and Managed Services: canonical CI models, taxonomies and controll
 vocabularies, CMDB operational quality (discovery orchestration, reconciliation,
 data lineage, SLA reporting). Stack: Angular 2, .NET MVC, REST & SOAP, MSSQL.
 
-Source: LinkedIn export 2026-07. The CV 2025-09 presents the whole Verizon span
-(Mar 2011 - Aug 2017) under this title — see upload report.
+Source: LinkedIn export 2026-07.

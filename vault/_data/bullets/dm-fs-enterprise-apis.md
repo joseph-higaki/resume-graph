@@ -9,5 +9,5 @@ order: 3
 
 Serving half of the same engagement as [[dm-fs-aurora-dynamodb]]: that bullet moves
 the stores, this one moves the access layer off z/OS. Carries the evidence for
-[[GraphQL]], [[Java]], [[AWS Lambda]] and [[Amazon ECS]] — all delivery-level
-exposure (led the teams), which is why those skills sit at `aware`/`working`.
+[[GraphQL]], [[Java]], [[AWS Lambda]] and [[Amazon ECS]] — delivery-level
+exposure (led the teams).

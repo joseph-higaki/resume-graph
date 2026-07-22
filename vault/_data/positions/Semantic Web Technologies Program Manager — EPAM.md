@@ -16,19 +16,10 @@ the Delivery Manager - Healthcare & Life Sciences role of record; grouped with
 professional evidence anchor for the ontology/knowledge-graph skills otherwise carried
 only by self-directed projects.
 
-Scope is sourced from the engagement SOW (`input/SOW - Semantic-DataTransformation
-Program Manager .docx`): four workstreams — Tooling RFP, MVP Deployment, Migration,
-Ontology Governance — interfacing EA, OPS, R&D, and business.
+Scope: four workstreams — Tooling RFP, MVP Deployment, Migration, Ontology
+Governance — interfacing EA, OPS, R&D, and business.
 
-Active role: bullets are written in present tense, and the SOW's stated engagement
-duration is deliberately kept out of both the bullet text and this note. A fixed
-window on the only current role reads as an end date to a recruiter, and the
-engagement is open.
-
-Skill calibration: SPARQL, RDF, and OWL are claimed from this role on the strength of
-hands-on work beyond the SOW — TBox extraction queries against metaphactory and
-meta-annotation design on the ontologies. SHACL is deliberately **not** claimed here;
-its only evidence remains [[Resume Graph]].
+Active role: bullets are written in present tense; no endDate, the engagement is open.
 
 Client is anonymized ("a key pharmaceutical client") per the public-repo rule; the
 platform vendor is named because tool experience is the point.

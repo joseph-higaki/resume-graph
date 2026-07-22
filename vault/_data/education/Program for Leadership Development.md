@@ -8,4 +8,4 @@ endDate: 2017-12-31
 ---
 # Program for Leadership Development
 
-2017. CV 2025-09 calls it 'Diploma in Leadership Development' — confirm at interview.
+2017.

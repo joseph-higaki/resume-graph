@@ -14,5 +14,4 @@ local team and corporate teams in Toronto. Biometric authentication for retail m
 banking, pen-test vendor management (Deloitte), canonical vocabulary for Customer
 Identity metadata, compliance with Risk, EA, and Cyber-Security.
 
-Source: LinkedIn export 2026-07. The CV 2025-09 collapses both Scotiabank roles into
-one 'Agile Delivery Manager' (Aug 2019 - Sep 2020) — see upload report.
+Source: LinkedIn export 2026-07.

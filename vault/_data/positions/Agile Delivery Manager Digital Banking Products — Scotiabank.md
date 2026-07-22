@@ -12,4 +12,4 @@ usedSkill: [ "[[Agile Delivery]]", "[[Vendor Management]]", "[[Scrum]]", "[[Team
 Led two teams in the Digital Banking Products tribe: online acquisition of credit
 cards and personal loans, Financial Risk Score API vendor sourcing, PI planning.
 
-Source: LinkedIn export 2026-07; CV 2025-09 (collapsed — see upload report).
+Source: LinkedIn export 2026-07; CV 2025-09.

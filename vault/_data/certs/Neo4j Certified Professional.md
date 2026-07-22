@@ -9,5 +9,5 @@ certifies: [ "[[Neo4j]]", "[[Cypher]]", "[[Graph Databases]]" ]
 # Neo4j Certified Professional
 
 Issued July 2026, no expiry. Exam-tested Cypher, graph data modeling, and Neo4j
-fundamentals — current attestation on top of the 2016–17 Verizon evidence, and
-what backs the aware → working bump on [[Neo4j]] and [[Cypher]].
+fundamentals — current attestation on top of the 2016–17 Verizon evidence, backing
+the `working` level on [[Neo4j]] and [[Cypher]].

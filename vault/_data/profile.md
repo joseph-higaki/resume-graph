@@ -15,7 +15,5 @@ Languages: Spanish (native), English (C1 / full professional). Honors: Verizon
 Ovation Award, IBM Manager's Choice Award (x2) — neither languages nor honors are
 modeled in the graph yet.
 
-Three summary variants exist across sources (LinkedIn About, CV 2025-09, docx CV);
-the description above condenses the LinkedIn About — pick the canonical wording at
-interview (see docs/upload_report_20260717.md). Phone number deliberately excluded
+The description condenses the LinkedIn About. Phone number deliberately excluded
 from this public repo.

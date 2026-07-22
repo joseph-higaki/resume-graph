@@ -15,6 +15,4 @@ Management and ServiceNow, on canonical CI models, taxonomies, and controlled
 vocabularies. Focal point of the 25-person Lima software organization; inter-team
 synergies with Dallas, Hyderabad, and Chennai.
 
-Source: LinkedIn export 2026-07 ('Team Leader - Application Development', 11 people,
-two agile teams); CV 2025-09 ('Application Development Team Leader', 16 engineers) —
-title wording and team size conflict, see upload report.
+Source: LinkedIn export 2026-07.

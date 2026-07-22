@@ -17,5 +17,4 @@ periods under the Delivery Manager - Financial Services role of record; grouped 
 [[Program Manager and Technical Product Owner — EPAM]] via titleOfRecord.
 
 Source: LinkedIn export 2026-07; CV 2024-12 ('Project Manager and Team Lead', 2022).
-Boundary (endDate 2022-12) assumed — the role transitioned into the wealth-management
-engagement in 2023.
+The role transitioned into the wealth-management engagement in 2023.

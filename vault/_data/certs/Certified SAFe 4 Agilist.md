@@ -11,6 +11,6 @@ certifies: [ "[[Scaled Agile Framework]]" ]
 
 Issued Jul 2017, expired Jul 2019.
 
-Credential URL normalised: the owner-supplied link carried Credly's
+Credential URL normalised: the source link carried Credly's
 `/linked_in_profile` suffix, which is a share-intent path rather than the badge's
 identity. Both resolve; the bare badge URI is what belongs in `sdo:url`.

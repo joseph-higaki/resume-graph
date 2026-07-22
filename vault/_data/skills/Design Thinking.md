@@ -6,4 +6,4 @@ level: aware
 ---
 # Design Thinking
 
-Certified by [[Enterprise Design Thinking Practitioner]]; stub pending interview.
+Certified by [[Enterprise Design Thinking Practitioner]].

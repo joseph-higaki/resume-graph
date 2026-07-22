@@ -12,4 +12,4 @@ Supersedes ITIL Intermediate (EXIN, Oct 2014) and ITIL Foundation (Thought Rock,
 Dec 2012) — not modeled separately.
 
 Deliberately NOT wired to `url:` — same dead EXIN badge host as
-[[Agile Scrum Master EXIN]] (expired TLS cert, then 503). Checked 2026-07-20.
+[[Agile Scrum Master EXIN]] (expired TLS cert, then 503).

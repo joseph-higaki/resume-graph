@@ -13,5 +13,3 @@ Earned on the same academy track rolled out under [[Semantic Web Technologies
 Program Manager — EPAM]] — vendor certification on the platform whose enterprise
 adoption the role leads. The graph does not yet express "credential earned during
 position"; nothing links this cert to the position (schema gap, see position note).
-LinkedIn shows 'RDF, RDFS, +5 skills'; the certified set was reconstructed from the
-skills-page associations — confirm at interview.

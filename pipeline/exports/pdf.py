@@ -167,24 +167,19 @@ def _muted(*parts: str | None) -> str:
     return f" <span class='muted'>({vals})</span>" if vals else ""
 
 
-def _years(start: str | None, end: str | None) -> str | None:
-    a, b = (start or "")[:4], (end or "")[:4]
-    if a and b:
-        return a if a == b else f"{a}–{b}"
-    return a or b or None
-
-
 def render_html(m: ResumeModel) -> str:
     b = m.basics
     contact = [e(b.email)] if b.email else []
     contact += [f"<a href='{e(u)}'>{e(u.split('//')[-1])}</a>" for u in b.profiles]
     contact_line = " &nbsp;·&nbsp; ".join(contact)
 
-    # Newest-first order comes from the model; the years make that order legible.
+    # Education years are deliberately unprinted (age-bias mitigation) — the graph
+    # keeps the dates and they still drive the newest-first order. Cert years DO
+    # print below: recency is their signal, and the badge links expose them anyway.
     education = _list_html([
         f"<strong>{e(x.name)}</strong>"
         + (f" — {e(x.issuer)}" if x.issuer else "")
-        + _muted(x.category, _years(x.start, x.end))
+        + _muted(x.category)
         for x in m.education
     ])
     # Name-is-link, unlike the printed repo URLs: badge URLs are UUID noise on

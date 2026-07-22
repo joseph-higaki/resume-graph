@@ -76,9 +76,10 @@ def to_json_resume(m: ResumeModel) -> dict:
         for sc in m.skills_by_category()
     ]
 
+    # No start/endDate on education, deliberately (age-bias mitigation): the graph
+    # keeps the dates; rendered CVs don't print them. Certificates keep `date`.
     education = [
-        {"institution": e.issuer, "area": e.name, "studyType": e.category,
-         "startDate": e.start, "endDate": e.end}
+        {"institution": e.issuer, "area": e.name, "studyType": e.category}
         for e in m.education
     ]
 

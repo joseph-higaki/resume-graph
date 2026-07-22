@@ -112,8 +112,11 @@ def test_json_resume_projects_link_and_certs_dated(model):
 def test_pdf_html_renders_sections(model):
     html = pdf.render_html(model)
     assert model.basics.name in html
-    for section in ("Experience", "Skills", "Education"):
+    for section in ("Experience", "Education"):
         assert section in html
+    # No standalone Skills section — skills appear only as project tags.
+    assert "<h2>Skills</h2>" not in html
+    assert "class='tag'" in html
 
 def test_pdf_default_layout_experience_first(model):
     # A plain build carries no Application → no audiences → default framing.

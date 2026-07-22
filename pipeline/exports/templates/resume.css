@@ -38,9 +38,6 @@ ul.bullets li { margin: 1.5pt 0; }
 .tag { display: inline-block; font-family: "IBM Plex Mono",ui-monospace,monospace;
        font-size: 7.6pt; background: var(--chip); color: #33506f;
        padding: 1pt 5pt; border-radius: 3px; margin: 0 3pt 3pt 0; }
-.skillrow { display: flex; gap: 8pt; margin: 2.5pt 0; break-inside: avoid; }
-.cat { flex: 0 0 30%; font-weight: 700; color: #2a3038; }
-.vals { flex: 1; }
 ul.plain { margin: 0; padding-left: 15pt; }
 ul.plain li { margin: 2pt 0; }
 .muted { color: var(--muted); }

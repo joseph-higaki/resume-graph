@@ -146,17 +146,6 @@ def _projects_html(m: ResumeModel) -> str:
     return "".join(blocks)
 
 
-def _skills_html(m: ResumeModel) -> str:
-    rows = []
-    for sc in m.skills_by_category():
-        names = ", ".join(e(s.label) for s in sc.skills)
-        rows.append(
-            f"<div class='skillrow'><span class='cat'>{e(sc.label)}</span>"
-            f"<span class='vals'>{names}</span></div>"
-        )
-    return "".join(rows)
-
-
 def _list_html(items: list[str]) -> str:
     return "<ul class='plain'>" + "".join(f"<li>{i}</li>" for i in items) + "</ul>"
 
@@ -225,7 +214,6 @@ def render_html(m: ResumeModel) -> str:
   {f"<p class='summary'>{e(b.summary)}</p>" if b.summary else ""}
 </header>
 {lead}
-{section("Skills", _skills_html(m))}
 {section("Education", education)}
 {section("Certifications", certs)}
 <footer>{_footer_html(m)}</footer>

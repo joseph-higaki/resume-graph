@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Voice Analysis
+creator: "[[profile]]"
 description: "Notebooks analyzing voice pitch, volume and timbre from a singing course: librosa and Praat/parselmouth feature extraction with dynamic-time-warping audio comparison."
 url: https://github.com/joseph-higaki/voice-analysis
 startDate: 2024-11-01

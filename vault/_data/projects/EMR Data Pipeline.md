@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: EMR Data Pipeline
+creator: "[[profile]]"
 description: "End-to-end EMR analytics pipeline: Airflow-orchestrated ingestion of Synthea records into GCP (BigQuery + GCS, provisioned with Terraform), transformed by dbt into patient-encounter fact/dim marts and a dashboard."
 url: https://github.com/joseph-higaki/emr_data_pipeline
 startDate: 2025-04-01

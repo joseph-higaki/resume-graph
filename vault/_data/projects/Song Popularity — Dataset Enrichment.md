@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Song Popularity — Dataset Enrichment
+creator: "[[profile]]"
 description: "EAE Master's group project: a Python console tool that enriches a song dataset with artist social-media signals fetched from Instagram and Music Story."
 url: https://github.com/joseph-higaki/music-hit-decorate-datasets
 startDate: 2021-07-01

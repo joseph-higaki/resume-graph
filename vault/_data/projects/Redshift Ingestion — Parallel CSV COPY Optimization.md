@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Redshift Ingestion — Parallel CSV COPY Optimization
+creator: "[[profile]]"
 description: "Benchmarked performance of full vs partitioned file ingestion strategies for Redshift bulk load."
 url: https://github.com/joseph-higaki/UDataEng_L03E03_IngestParallelFiles_Redshift
 startDate: 2022-03-01

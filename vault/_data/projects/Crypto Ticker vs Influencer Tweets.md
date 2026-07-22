@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Crypto Ticker vs Influencer Tweets
+creator: "[[profile]]"
 description: "EAE Master's group project: extract crypto-influencer tweets over a timeline, tag cryptocurrency keywords, and overlay them on the asset price chart."
 url: https://github.com/joseph-higaki/asset-ticker-vs-tweets
 startDate: 2021-07-01

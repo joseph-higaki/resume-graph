@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Eventstore Warehouse — S3 to Redshift ETL
+creator: "[[profile]]"
 description: "Python ETL pipeline loading JSON event logs and song data from S3 into a Redshift star-schema."
 url: https://github.com/joseph-higaki/UDataEng_L03_P02_S3toRedshiftDW
 startDate: 2022-04-01

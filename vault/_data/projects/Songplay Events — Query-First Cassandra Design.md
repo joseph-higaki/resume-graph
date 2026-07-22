@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Songplay Events — Query-First Cassandra Design
+creator: "[[profile]]"
 description: "Query-first Cassandra keyspace design for event data, supporting fixed read patterns with optimal denormalization."
 url: https://github.com/joseph-higaki/UDENG_L02P02_Modeling_Cassandra
 startDate: 2022-03-01

@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Payslips Processor
+creator: "[[profile]]"
 description: "Personal automation that downloads, decrypts and organizes payslip PDFs from a config file, removing a recurring manual chore."
 url: https://github.com/joseph-higaki/payslips-processor
 startDate: 2024-07-01

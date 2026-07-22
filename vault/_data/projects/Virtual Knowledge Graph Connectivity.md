@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Virtual Knowledge Graph Connectivity
+creator: "[[profile]]"
 description: "Virtual-knowledge-graph / OBDA connectivity and fidelity harness: Ontop answers SPARQL over Trino against Postgres and Iceberg, staged in 'rungs' and validated against a GraphDB ground truth."
 url: https://github.com/joseph-higaki/virtual-knowledge-graph-connectivity
 startDate: 2026-07-01

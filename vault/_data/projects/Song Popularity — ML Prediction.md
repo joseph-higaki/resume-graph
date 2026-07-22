@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Song Popularity — ML Prediction
+creator: "[[profile]]"
 description: "EAE Master's group project: machine-learning models predicting a song's popularity from the enriched dataset."
 url: https://github.com/joseph-higaki/music-hit-analyze-data
 startDate: 2021-07-01

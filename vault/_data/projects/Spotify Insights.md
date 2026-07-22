@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Spotify Insights
+creator: "[[profile]]"
 description: "Weather-aware Spotify streaming-history insights: Airflow loads listening history to GCS and BigQuery external tables, with DuckDB and notebooks for exploratory analysis."
 url: https://github.com/joseph-higaki/spotify_insights
 startDate: 2024-12-01

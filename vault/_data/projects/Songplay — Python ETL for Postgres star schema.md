@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Songplay — Python ETL for Postgres star schema
+creator: "[[profile]]"
 description: "Python ETL pipeline loading songs and play events into a Postgres star-schema data warehouse."
 url: https://github.com/joseph-higaki/UDataEng_L02P01_create-song-play-schema
 startDate: 2022-02-01

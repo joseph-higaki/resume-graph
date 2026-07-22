@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: RAG Bench Analytics
+creator: "[[profile]]"
 description: "Turns accumulated RAG benchmark runs into a dbt dimensional model on Postgres, orchestrated with Airflow and landed on AWS S3, feeding a reporting dashboard."
 url: https://github.com/joseph-higaki/rag-bench-analytics
 startDate: 2026-06-01

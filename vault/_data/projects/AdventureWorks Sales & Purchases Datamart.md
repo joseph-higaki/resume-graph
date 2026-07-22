@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: AdventureWorks Sales & Purchases Datamart
+creator: "[[profile]]"
 description: "EAE Master's final project: Pentaho/Kettle ETL building Sales and Purchases datamarts from AdventureWorks with slowly-changing dimensions across MySQL and SQL Server."
 url: https://github.com/joseph-higaki/etl_adventureworks_sales_purchases_datamart
 startDate: 2021-06-01

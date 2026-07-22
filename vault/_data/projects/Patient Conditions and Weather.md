@@ -1,6 +1,7 @@
 ---
 type: "[[Project]]"
 name: Patient Conditions and Weather
+creator: "[[profile]]"
 description: "Extracts synthetic clinical conditions and joins them to the weather at time of diagnosis; Airflow + DuckDB over GCS, with EDA notebooks on seasonal condition patterns."
 url: https://github.com/joseph-higaki/patient_conditions_weather
 startDate: 2025-01-01

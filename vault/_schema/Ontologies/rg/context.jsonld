@@ -6,7 +6,6 @@
     "level": "rg:level",
     "evidencedBy": { "@id": "rg:evidencedBy", "@type": "@id", "@container": "@set" },
     "usedSkill": { "@id": "rg:usedSkill", "@type": "@id", "@container": "@set" },
-    "deliveredDuring": { "@id": "rg:deliveredDuring", "@type": "@id" },
     "heldBy": { "@id": "rg:heldBy", "@type": "@id" },
     "organization": { "@id": "rg:organization", "@type": "@id" },
     "certifies": { "@id": "rg:certifies", "@type": "@id", "@container": "@set" },

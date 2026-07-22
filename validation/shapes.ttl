@@ -59,7 +59,8 @@ rgs:ProjectShape a sh:NodeShape ;
     sh:property [ sh:path sdo:startDate ; sh:datatype xsd:date ; sh:maxCount 1 ] ;
     sh:property [ sh:path rg:lastActivity ; sh:datatype xsd:date ; sh:maxCount 1 ] ;
     sh:property [ sh:path rg:usedSkill ; sh:class rg:Skill ] ;
-    sh:property [ sh:path rg:deliveredDuring ; sh:class rg:Position ; sh:maxCount 1 ] .
+    sh:property [ sh:path sdo:creator ; sh:class rg:Person ; sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:message "Every Project must name its creator (sdo:creator → the Person) — without it the project node floats off the hub." ] .
 
 # ---------------------------------------------------------------------------
 # Skill. Structure first; the evidence rule is a separate SPARQL shape below

@@ -28,6 +28,7 @@
       "description": "sdo:description",
       "sameAs": { "@id": "sdo:sameAs", "@type": "@id", "@container": "@set" },
       "url": { "@id": "sdo:url", "@type": "@id" },
+      "creator": { "@id": "sdo:creator", "@type": "@id" },
       "roleName": "sdo:roleName",
       "startDate": { "@id": "sdo:startDate", "@type": "xsd:date" },
       "endDate": { "@id": "sdo:endDate", "@type": "xsd:date" },

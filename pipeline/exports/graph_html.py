@@ -117,8 +117,14 @@ def _activity(g: Graph, s, typ: str) -> tuple[float | None, bool]:
     A Position with a startDate and no endDate is the *current* role, not an
     undated one — that pair is returned as ongoing and the viewer resolves it
     against its own clock, so the build stays reproducible while the window
-    still slides. Projects carry a start only; absence of an end there means
-    "not recorded", not "still running", so they never report ongoing."""
+    still slides. Projects prefer `rg:lastActivity` (the last-push snapshot):
+    activity is what the window filters on, and a repo started years ago but
+    pushed recently belongs in a recent window. They never report ongoing —
+    absence of a date means "not recorded", not "still running"."""
+    if typ == "Project":
+        last = _decimal_year(g.value(s, RG.lastActivity))
+        if last is not None:
+            return last, False
     end = _decimal_year(g.value(s, SDO.endDate))
     if end is not None:
         return end, False
@@ -191,7 +197,11 @@ def _attrs(g: Graph, s, typ: str) -> dict:
             "titleOfRecord": lit(RG.titleOfRecord),
         })
     if typ == "Project":
-        return _drop({"description": lit(SDO.description), "start": lit(SDO.startDate)})
+        # Month resolution only: the vault's lastActivity day is a snapshot
+        # artifact (always the 1st), so YYYY-MM is the honest precision.
+        last = lit(RG.lastActivity)
+        return _drop({"description": lit(SDO.description),
+                      "lastActivity": last[:7] if last else None})
     if typ == "Skill":
         cat = g.value(s, SKOS.broader)
         return _drop({"level": lit(RG.level),

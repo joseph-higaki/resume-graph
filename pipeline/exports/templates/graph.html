@@ -380,13 +380,13 @@ canvas.addEventListener("wheel", e=>{
 // ---- side panel ----------------------------------------------------------
 const panel=document.getElementById("panel");
 const AT = { Position:["role","org","start","end","titleOfRecord"],
-  Project:["description","start"], Skill:["level","category"],
+  Project:["description","lastActivity"], Skill:["level","category"],
   Person:["summary","email"], Category:["definition"],
   Certification:["issuer"], Education:["credential","issuer"] };
 const KLABEL = { role:"Role", org:"Organization", start:"Start", end:"End",
   titleOfRecord:"Title of record", description:"Description", level:"Level",
   category:"Category", summary:"Summary", email:"Email", definition:"Definition",
-  issuer:"Issuer", credential:"Credential" };
+  issuer:"Issuer", credential:"Credential", lastActivity:"Last activity" };
 const REL = { usedSkill:"Skills used", broader:"Category", evidencedBy:"Evidence",
   certifies:"Certifies", org:"Organization", heldBy:"Held by",
   deliveredDuring:"Delivered during", recognizedBy:"Recognized by" };

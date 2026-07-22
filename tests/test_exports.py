@@ -228,6 +228,23 @@ def test_graph_skill_date_hops_bulletof_to_the_owner():
     assert ongoing is False
 
 
+def test_graph_project_dates_are_last_activity_month(graph_ttl):
+    """Projects surface rg:lastActivity, month resolution — not their start.
+
+    Two claims: the panel attr is YYYY-MM (the vault's day is a snapshot
+    artifact, so showing it would assert precision the data doesn't have), and
+    the window's `last` derives from lastActivity — a repo started years ago
+    but pushed recently belongs in a recent window."""
+    data = graph_html.extract(graph_ttl)
+    projects = [n for n in data["nodes"] if n["type"] == "Project"]
+    assert projects
+    for n in projects:
+        assert "start" not in n["attrs"]
+        la = n["attrs"].get("lastActivity")
+        assert la and re.fullmatch(r"\d{4}-\d{2}", la)
+        assert n["last"] == pytest.approx(graph_html._decimal_year(la), abs=0.01)
+
+
 def test_graph_unevidenced_skills_stay_undated(graph_ttl):
     """A stub is unevidenced by construction, so it has no date to report —
     the gap-analysis signal, not a derivation gap to paper over."""
@@ -266,7 +283,7 @@ def test_graph_ongoing_role_marks_current_not_undated(graph_ttl):
     # graph actually asserts, so two builds of one vault agree forever.
     asserted = set()
     for n in data["nodes"]:
-        for key in ("start", "end", "issued"):
+        for key in ("start", "end", "issued", "lastActivity"):
             if (v := n["attrs"].get(key)):
                 asserted.add(graph_html._decimal_year(v))
     assert max(n["last"] for n in data["nodes"] if "last" in n) <= max(asserted)

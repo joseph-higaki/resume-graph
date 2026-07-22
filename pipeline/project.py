@@ -34,6 +34,7 @@ import urllib.parse
 from pathlib import Path
 
 from rdflib import Graph, Literal, Namespace, URIRef
+from rdflib.namespace import RDF
 
 RG = Namespace("https://joseph-higaki.github.io/resume-graph/vocab/rg#")
 SDO = Namespace("https://schema.org/")
@@ -74,9 +75,12 @@ def applications(g: Graph) -> list[URIRef]:
 def resolve_application(g: Graph, ident: str) -> URIRef:
     """Resolve an IRI or a bare slug to exactly one Application in the graph.
 
-    Slugs are matched against the percent-encoded tail of each Application IRI,
-    so `--application acme-kg-engineer` works without the caller knowing the ID
-    base. Ambiguity is an error rather than a first-match — two applications
+    Slugs are matched against the percent-encoded tail of each Application IRI
+    and against its sanitized `slug_for` form, so `--application acme-kg-engineer`
+    works without the caller knowing the ID base. The `slug_for` candidate is
+    load-bearing: it is what the "known:" error message prints, and for any note
+    name with spaces or dashes it is the only form a shell can pass unquoted.
+    Ambiguity is an error rather than a first-match — two applications
     resolving from one slug means the wrong CV could be built silently."""
     found = applications(g)
     if "://" in ident:
@@ -86,7 +90,8 @@ def resolve_application(g: Graph, ident: str) -> URIRef:
         return target
 
     wanted = urllib.parse.quote(ident)
-    matches = [a for a in found if str(a).rsplit("/", 1)[-1] in (wanted, ident)]
+    matches = [a for a in found
+               if str(a).rsplit("/", 1)[-1] in (wanted, ident) or slug_for(a) == ident]
     if not matches:
         known = ", ".join(slug_for(a) for a in found) or "(none)"
         raise ProjectionError(f"no rg:Application matching {ident!r}; known: {known}")
@@ -240,6 +245,22 @@ def _prune_unevidenced_claims(g: Graph, app: URIRef) -> tuple[int, int]:
     return purged, demoted
 
 
+def _prune_orphan_organizations(g: Graph) -> int:
+    """Drop Organization nodes nothing references any more.
+
+    `rg:excludes` removes a position/cert but not its employer/issuer, and an
+    Organization with zero inbound edges is dead weight: the graph render shows
+    employer orgs only, and issuer names reach the reader as text on the
+    referencing node — so nothing consumes it, yet it still names the org in a
+    world-readable projected graph.ttl. Runs after excludes and the claims
+    cascade so every removal has already landed."""
+    orphans = [org for org in g.subjects(RDF.type, RG.Organization)
+               if next(g.triples((None, None, org)), None) is None]
+    for org in orphans:
+        g.remove((org, None, None))
+    return len(orphans)
+
+
 def _substitute_job_title(g: Graph, app: URIRef) -> bool:
     """Retarget the Person's `sdo:jobTitle` to the Application's `rg:targetRole`.
 
@@ -302,6 +323,7 @@ def project(graph: Graph, app: URIRef) -> tuple[Graph, dict]:
     dropped_bullets = _select_bullets(g, app)
     excluded = _apply_excludes(g, app)
     purged, demoted = _prune_unevidenced_claims(g, app)   # must follow excludes
+    orgs_pruned = _prune_orphan_organizations(g)          # must follow all removals
     summarized = _substitute_summary(g, app)
     retitled = _substitute_job_title(g, app)
     stripped = _strip_framings(g)
@@ -314,6 +336,7 @@ def project(graph: Graph, app: URIRef) -> tuple[Graph, dict]:
         "nodes_excluded": excluded,
         "skills_purged": purged,
         "skills_demoted": demoted,
+        "orgs_pruned": orgs_pruned,
         "summary_substituted": summarized,
         "framings_stripped": stripped,
         "audiences": sorted(audiences_of(graph, app)) or ["(all)"],
@@ -431,6 +454,7 @@ def main() -> int:
               f"-{stats['nodes_excluded']} excluded, "
               f"-{stats['skills_purged']} skills unevidenced, "
               f"{stats['skills_demoted']} demoted to gaps, "
+              f"-{stats['orgs_pruned']} orphan orgs, "
               f"summary={'yes' if stats['summary_substituted'] else 'default'}) "
               f"-> {dest / 'graph.ttl'}")
     return 0

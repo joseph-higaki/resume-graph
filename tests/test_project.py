@@ -111,6 +111,22 @@ def test_unknown_application_fails_loud(graph_ttl, tmp_path):
         project.resolve_application(g, "nope")
 
 
+def test_resolves_by_sanitized_slug(graph_ttl, tmp_path):
+    """The slug the "known:" error message prints must itself resolve — a
+    percent-encoded IRI tail (any real note name) never matches raw-tail
+    comparison, so `slug_for` is the only usable CLI handle for it."""
+    acme = URIRef(ID + "Acme%20%E2%80%94%20KG%20Engineer")
+    note = """
+data:Acme%20%E2%80%94%20KG%20Engineer a rg:Application ;
+    rg:targetRole "KG Engineer" ;
+    rg:audience "data-eng" ;
+    sdo:name "acme application" .
+"""
+    g = merged(graph_ttl, tmp_path, note)
+    assert project.slug_for(acme) == "acme---kg-engineer"
+    assert project.resolve_application(g, "acme---kg-engineer") == acme
+
+
 # --- bullet selection ------------------------------------------------------ #
 
 def test_bullets_filtered_to_declared_audiences(graph_ttl, tmp_path):
@@ -146,6 +162,35 @@ def test_excluding_a_position_drops_its_bullets(graph_ttl, tmp_path):
                app_note(f"rg:excludes <{EPAM_STAFFING}> ;"))
     out, _ = project.project(g, APP)
     assert list(out.subjects(RG.bulletOf, EPAM_STAFFING)) == []
+
+
+def sole_referrer_of_an_org(g: Graph) -> tuple[URIRef, URIRef]:
+    """A (referrer, org) where that node is the Organization's only inbound edge.
+
+    Derived, not hardcoded — which issuer rests on a single cert changes as the
+    vault grows."""
+    for org in sorted(g.subjects(RDF.type, RG.Organization), key=str):
+        inbound = {s for s, p, o in g.triples((None, None, org))}
+        if len(inbound) == 1:
+            return URIRef(str(inbound.pop())), URIRef(str(org))
+    pytest.skip("no Organization in the current vault has a single referrer")
+
+
+def test_excluding_sole_referrer_prunes_the_organization(graph_ttl, tmp_path):
+    """graph.ttl must not outlive graph.html: an exclusion removes a cert or
+    position but not its issuer/employer, and a zero-inbound Organization is
+    invisible to every consumer yet still named in a world-readable file."""
+    base_g = project.load_graph(graph_ttl)
+    referrer, org = sole_referrer_of_an_org(base_g)
+    g = merged(graph_ttl, tmp_path, app_note(f"rg:excludes <{referrer}> ;"))
+    out, stats = project.project(g, APP)
+    assert (org, None, None) not in out
+    assert stats["orgs_pruned"] >= 1
+    # the invariant, not just the instance: every surviving org is referenced
+    survivors = list(out.subjects(RDF.type, RG.Organization))
+    assert survivors
+    for o in survivors:
+        assert next(out.triples((None, None, o)), None) is not None
 
 
 # --- unevidenced-claim cascade --------------------------------------------- #

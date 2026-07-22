@@ -71,19 +71,32 @@ resume-applications                          resume-graph
 
 Building and publishing are separate on purpose. `make applications` can be
 re-run at will without touching the site; `make publish` + a commit is the
-deliberate, reviewable act of putting a CV on the public web, and `git rm` on one
-directory takes it back down.
+deliberate, reviewable act of putting a CV on the public web.
+
+The tailored CVs exist in this public repo's git history at no point. They are
+checked out into `.apps/` (gitignored) during a CI run and live on only inside
+the ephemeral Pages artifact.
+
+### 1. Minting a `publicId`
+
+The pipeline never generates ids — it only reads `rg:publicId` from the note.
+Mint one yourself and paste it into the application note's frontmatter in the
+private repo:
+
+```bash
+python3 -c "import uuid; print(uuid.uuid4().hex)"
+```
+
+Minted **once per application, never regenerated** — the URL goes out to a
+person, so a rebuild must not move it. SHACL enforces the shape
+(`^[0-9a-f]{32}$`); anything else fails validation before it can deploy.
 
 **`make publish` only promotes directories named by 32 hex characters.** An
 application whose note carries no `rg:publicId` is projected to its readable slug
 instead, so it is structurally unpublishable — a folder named after an employer
 cannot reach a public host by accident.
 
-The tailored CVs exist in this public repo's git history at no point. They are
-checked out into `.apps/` (gitignored) during a CI run and live on only inside
-the ephemeral Pages artifact.
-
-### Runbook
+### 2. Publishing and re-publishing
 
 ```bash
 # in resume-graph
@@ -109,10 +122,24 @@ tree**: a local `make publish` you never pushed deploys nothing, successfully an
 silently. It then confirms a run actually started (see the `/dispatches` trap
 below) and prints the live URLs.
 
-Withdrawing a CV is `git rm -r published/<publicId>`, push, `make deploy`.
-Rotating a URL is a new `publicId` in the note, then rebuild, publish, and remove
-the old directory — the old URL 404s immediately, but assume anyone who had it
-kept a copy.
+Re-publishing an updated CV is the same sequence, unchanged: the `publicId`
+stays fixed, so the rebuilt pages replace the old ones at the same URL and every
+link already in someone's inbox keeps working.
+
+### 3. Removing a CV
+
+```bash
+# in resume-applications
+git rm -r published/<publicId>
+git commit -m "unpublish <publicId>" && git push
+
+# from resume-graph, unless auto-deploy is set up
+make deploy
+```
+
+The old URL 404s on the next deploy. Rotating a URL instead of removing it is a
+new `publicId` in the note, then rebuild, publish, and `git rm` the old
+directory — but assume anyone who had the old URL kept a copy of the content.
 
 ## Secrets
 

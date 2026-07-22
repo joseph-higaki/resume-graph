@@ -114,16 +114,17 @@ def _projects_html(m: ResumeModel) -> str:
     for p in m.projects:
         tags = "".join(f"<span class='tag'>{e(s)}</span>" for s in p.skills)
         # Scheme stripped for display (same treatment as the contact line): on
-        # paper the URL text is the link, so it must read clean.
-        repo = (f"<span class='repo'><a href='{e(p.url)}'>{e(p.url.split('//')[-1])}</a></span>"
+        # paper the URL text is the link, so it must read clean. Own line
+        # between title and description, not squeezed into the head row.
+        repo = (f"<div class='repo'><a href='{e(p.url)}'>{e(p.url.split('//')[-1])}</a></div>"
                 if p.url else "")
         blocks.append(
             "<div class='project'>"
             "<div class='job-head'>"
             f"<span class='title'>{e(p.name)}</span>"
-            + repo +
             f"<span class='dates'>{_month(p.start)}</span>"
             "</div>"
+            + repo
             + (f"<p class='desc'>{e(p.description)}</p>" if p.description else "")
             + _bullets_html(p)
             + (f"<div class='tags'>{tags}</div>" if tags else "")

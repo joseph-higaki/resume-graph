@@ -333,9 +333,14 @@ function draw(){
 // ---- main loop -----------------------------------------------------------
 function frame(){ if(alpha>0.021||dragged) tick(); draw(); raf=requestAnimationFrame(frame); }
 let raf;
+// First load settles off-screen: the first paint is the final layout, no bounce.
+// alpha parks below frame()'s tick threshold, so the sim is cold but still live —
+// pointerdown re-heats it for dragging, reset re-runs it hot (animated, opt-in).
+// REDUCED keeps its draw-only loop: never ticks, not even on drag.
 function run(){
-  if (REDUCED){ for(let i=0;i<400;i++) tick(); draw();
-    (function loop(){ draw(); raf=requestAnimationFrame(loop); })(); }
+  for(let i=0;i<400;i++) tick();
+  alpha=0.02;
+  if (REDUCED) (function loop(){ draw(); raf=requestAnimationFrame(loop); })();
   else frame();
 }
 

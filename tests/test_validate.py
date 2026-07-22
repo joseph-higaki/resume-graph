@@ -92,6 +92,7 @@ def test_usedskill_reference_makes_skill_claimed(tmp_path):
         'type: "[[Project]]"\n'
         "name: K8s Migration\n"
         'description: "Fixture project that claims Kubernetes via usedSkill."\n'
+        'creator: "[[profile]]"\n'
         'usedSkill: [ "[[Kubernetes]]" ]\n'
         "---\n# K8s Migration\n",
         encoding="utf-8",
@@ -99,6 +100,23 @@ def test_usedskill_reference_makes_skill_claimed(tmp_path):
     _, conforms, report = build_and_validate(vault, tmp_path / "out")
     assert not conforms
     assert "Kubernetes" in report
+
+
+def test_project_without_creator_fails(tmp_path):
+    # sdo:creator is what anchors a self-directed Project to the Person hub;
+    # a project note without it would float off the graph unnoticed.
+    vault = copy_vault(tmp_path)
+    (vault / "_data" / "projects" / "Orphan Project.md").write_text(
+        "---\n"
+        'type: "[[Project]]"\n'
+        "name: Orphan Project\n"
+        'description: "Fixture project with no creator edge."\n'
+        "---\n# Orphan Project\n",
+        encoding="utf-8",
+    )
+    _, conforms, report = build_and_validate(vault, tmp_path / "out")
+    assert not conforms
+    assert "creator" in report
 
 
 def test_unclaimed_stub_skill_is_exempt(tmp_path):

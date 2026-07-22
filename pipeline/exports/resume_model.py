@@ -65,7 +65,6 @@ class Project:
     name: str
     description: str | None
     start: str | None
-    during_iri: str | None       # owning Position IRI, if any
     url: str | None = None       # sdo:url — the repo link
     bullets: list[Bullet] = field(default_factory=list)
     skills: list[str] = field(default_factory=list)
@@ -327,16 +326,15 @@ def build_model(graph_path: Path = DEFAULT_GRAPH) -> ResumeModel:
     # projects
     projects: list[Project] = []
     for r in g.query("""
-        SELECT ?proj ?name ?desc ?start ?during ?url WHERE {
+        SELECT ?proj ?name ?desc ?start ?url WHERE {
             ?proj a rg:Project ; sdo:name ?name .
             OPTIONAL { ?proj sdo:description ?desc }
             OPTIONAL { ?proj sdo:startDate ?start }
-            OPTIONAL { ?proj rg:deliveredDuring ?during }
             OPTIONAL { ?proj sdo:url ?url }
         }""", initNs=ns):
         projects.append(Project(
             iri=str(r.proj), name=str(r.name), description=_s(r.desc),
-            start=_s(r.start), during_iri=_s(r.during), url=_s(r.url),
+            start=_s(r.start), url=_s(r.url),
             bullets=_bullets_for(g, r.proj), skills=_skills_for(g, r.proj),
             emphasized=str(r.proj) in emphasized,
         ))

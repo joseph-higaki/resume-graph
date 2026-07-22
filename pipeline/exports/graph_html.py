@@ -77,7 +77,7 @@ _EDGE_PREDS = {
     RG.heldBy: "heldBy",
     RG.organization: "org",
     RG.usedSkill: "usedSkill",
-    RG.deliveredDuring: "deliveredDuring",
+    SDO.creator: "creator",
     SKOS.broader: "broader",
     RG.evidencedBy: "evidencedBy",
     RG.certifies: "certifies",

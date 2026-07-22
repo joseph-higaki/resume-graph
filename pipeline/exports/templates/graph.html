@@ -393,7 +393,7 @@ const KLABEL = { role:"Role", org:"Organization", start:"Start", end:"End",
   url:"Link" };
 const REL = { usedSkill:"Skills used", broader:"Category", evidencedBy:"Evidence",
   certifies:"Certifies", org:"Organization", heldBy:"Held by",
-  deliveredDuring:"Delivered during", recognizedBy:"Recognized by" };
+  creator:"Created by", recognizedBy:"Recognized by" };
 const LEVELS = ["aware","working","proficient","expert"];
 function esc(s){ return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 function dot(t){ return `<span class="lg-dot" style="background:${typeColor[t]}"></span>`; }
@@ -444,7 +444,7 @@ function select(n){
   // relationships grouped by kind
   const groups={};
   for(const e of adj.get(n.id)){ const key=e.kind; (groups[key]=groups[key]||[]).push(e.o); }
-  const orderKinds=["usedSkill","broader","evidencedBy","certifies","org","heldBy","deliveredDuring","recognizedBy"];
+  const orderKinds=["usedSkill","broader","evidencedBy","certifies","org","heldBy","creator","recognizedBy"];
   for(const k of orderKinds){ if(!groups[k]) continue;
     const chips=groups[k].map(o=>`<span class="chip" data-id="${esc(o.id)}">${dot(o.type)}${esc(o.label)}</span>`).join("");
     h+=`<div class="rel-group"><div class="rg-t"><span>${REL[k]||k}</span><span>${groups[k].length}</span></div>${chips}</div>`;

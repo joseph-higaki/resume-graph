@@ -104,8 +104,8 @@ Static hosting + artifact storage for CI pipelines.
 ```
 
 ## Semantic model
-- `schema:Person` (hub), `schema:EmployeeRole` + `schema:Organization` (positions), `rg:Project ⊑ schema:CreativeWork`, skills as `skos:Concept` + `schema:DefinedTerm` with `skos:broader` category tree, `schema:EducationalOccupationalCredential` for certs (`rg:certifies` → skills).
-- `rg:` vocab defined as ontology notes in the vault (dogfooding the spec's schema layer): `rg:level`, `rg:evidencedBy`, `rg:deliveredDuring`, `rg:audience`, `rg:Application`, `rg:emphasizes`, `rg:excludes`, `rg:demands`, `rg:targetRole`, `rg:status`.
+- `schema:Person` (hub), `schema:EmployeeRole` + `schema:Organization` (positions), `rg:Project ⊑ schema:CreativeWork` (self-directed only, anchored to the Person via `schema:creator`), skills as `skos:Concept` + `schema:DefinedTerm` with `skos:broader` category tree, `schema:EducationalOccupationalCredential` for certs (`rg:certifies` → skills).
+- `rg:` vocab defined as ontology notes in the vault (dogfooding the spec's schema layer): `rg:level`, `rg:evidencedBy`, `rg:audience`, `rg:Application`, `rg:emphasizes`, `rg:excludes`, `rg:demands`, `rg:targetRole`, `rg:status`.
 - ESCO: `skos:exactMatch`/`closeMatch` to `http://data.europa.eu/esco/skill/…` IRIs where they exist.
 
 ## Application projection (`pipeline/project.py`)

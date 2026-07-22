@@ -1,6 +1,6 @@
 ---
 type: "[[Bullet]]"
-text: "Program-manage enterprise adoption of ontologies and knowledge graphs for a key pharmaceutical client, spanning platform selection, MVP deployment, ontology migration, and ontology governance."
+text: "Program-manage enterprise adoption of ontologies and knowledge graphs for a key pharmaceutical client, spanning platform selection, platform deployment, ontology migration, and ontology governance."
 audience: data-eng
 bulletOf: "[[Semantic Web Technologies Program Manager — EPAM]]"
 order: 1

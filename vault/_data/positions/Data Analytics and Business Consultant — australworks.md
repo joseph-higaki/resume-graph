@@ -5,7 +5,7 @@ organization: "[[australworks]]"
 heldBy: "[[profile]]"
 startDate: 2024-10-01
 endDate: 2025-04-30
-usedSkill: [ "[[Data Analysis]]", "[[Business Consulting]]", "[[Data Integration]]" ]
+usedSkill: [ "[[Data Analysis]]", "[[Business Consulting]]", "[[Data Integration]]", "[[Data Quality]]", "[[Power BI]]","[[Apache Airflow]]" ]
 ---
 # Data Analytics and Business Consultant — australworks
 

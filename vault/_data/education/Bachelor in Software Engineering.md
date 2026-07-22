@@ -1,6 +1,6 @@
 ---
 type: "[[Education]]"
-name: "Bachelor in Software Engineering"
+name: "Software Engineering"
 credentialCategory: "bachelor degree"
 recognizedBy: "[[Universidad Peruana de Ciencias Aplicadas]]"
 startDate: 1998-01-01

@@ -1,6 +1,6 @@
 ---
 type: "[[Bullet]]"
-text: "Build the program's semantic capability base — 40 practitioners skilled to date on ontology tooling and semantic modeling practice."
+text: "Build the program's semantic capability skilling stream: 40 practitioners trained to date on ontology tooling and semantic modeling practice."
 audience: general
 bulletOf: "[[Semantic Web Technologies Program Manager — EPAM]]"
 order: 6

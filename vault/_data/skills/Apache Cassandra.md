@@ -3,7 +3,7 @@ type: "[[Skill]]"
 prefLabel: "Apache Cassandra"
 broader: "[[data-eng]]"
 level: aware
-evidencedBy: [ "[[Songplay Events — Query-First Cassandra Design]]" ]
+evidencedBy: [ "[[Songplay Events — Query-First Cassandra Design]]", "[[Software Engineering Supervisor — Verizon]]" ]
 ---
 # Apache Cassandra
 

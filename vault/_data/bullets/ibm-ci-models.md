@@ -1,6 +1,6 @@
 ---
 type: "[[Bullet]]"
-text: "Integrated canonical Configuration Item models, taxonomies, and controlled vocabularies for consistent discovery and automated reconciliation across ITSM platforms."
+text: "Established Configuration Item taxonomies and vocabularies for consistent discovery and automated reconciliation across ITSM platforms."
 audience: data-eng
 bulletOf: "[[Team Leader Application Development — IBM]]"
 order: 2

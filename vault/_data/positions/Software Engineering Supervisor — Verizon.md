@@ -5,7 +5,7 @@ organization: "[[Verizon]]"
 heldBy: "[[profile]]"
 startDate: 2016-09-01
 endDate: 2017-08-31
-usedSkill: [ "[[Team Leadership]]", "[[CMDB]]", "[[ITIL]]", "[[.NET]]", "[[Microsoft SQL Server]]", "[[Scaled Agile Framework]]" ]
+usedSkill: [ "[[Team Leadership]]", "[[CMDB]]", "[[ITIL]]", "[[.NET]]", "[[Microsoft SQL Server]]", "[[Neo4j]]", "[[Cypher]]", "[[Apache Cassandra]]", "[[Scaled Agile Framework]]" ]
 ---
 # Software Engineering Supervisor — Verizon
 

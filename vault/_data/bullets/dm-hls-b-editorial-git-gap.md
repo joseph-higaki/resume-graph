@@ -1,6 +1,6 @@
 ---
 type: "[[Bullet]]"
-text: "Assess the platform's editorial workflow against R&D's established git-based ontology workflows, surfacing the trade-off between UI-mediated curation and version-controlled, review-gated change."
+text: "Assess the new platform's triple-store-based editorial workflow against established git-based ontology workflows, surfacing the trade-off between bounded, UI-mediated curation and fully customizable, version-controlled, PR-gated processes."
 audience: data-eng
 bulletOf: "[[Semantic Web Technologies Program Manager — EPAM]]"
 order: 4
